@@ -21,14 +21,13 @@ def get_data(parse, page_soup):
 
 def main():
     my_url, list_of_links_to_be_completed, list_of_links_completed = setup()
+    session = requests.Session()
 
     while len(list_of_links_to_be_completed) > 0:
         t1 = time.perf_counter()
 
-        # s = requests.Session()
-
         parse = HTML_parsing.HtmlParsing()
-        continue_collecting_data, page_html = parse.request_html(my_url)
+        continue_collecting_data, page_html = parse.request_html(my_url, session)
 
         if continue_collecting_data:
             page_soup = Soup(page_html, "lxml")
@@ -38,6 +37,8 @@ def main():
             print("Connection error: ", my_url)
 
         print(time.perf_counter() - t1)
+        list_of_links_to_be_completed.pop(0)
+        my_url = list_of_links_to_be_completed[0]
 
 
 main()

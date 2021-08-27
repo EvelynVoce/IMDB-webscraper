@@ -4,11 +4,11 @@ import requests
 class HtmlParsing:
 
     @staticmethod
-    def request_html(my_url):
+    def request_html(my_url, session):
         continue_collecting_data = True
         page_html = None
         # try:
-        page_html = requests.get(my_url, stream=True).text
+        page_html = session.get(my_url, stream=True).text
 
         # except:
             # continue_collecting_data = False
@@ -32,6 +32,7 @@ class HtmlParsing:
             met_requirements = True
 
         return met_requirements
+
 
     @staticmethod
     def get_title_and_date(page_soup, tv_series=0):
