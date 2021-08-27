@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup as Soup
 import gc  # garbage collector - really useful for RAM management
 import HTML_parsing
+import time
+import requests
 
 
 def setup():
@@ -13,12 +15,18 @@ def setup():
 
 def get_data(parse, page_soup):
     met_requirements = parse.get_amount_of_reviews(page_soup)
+    if met_requirements:
+        title, date = parse.get_title_and_date(page_soup)
 
 
 def main():
     my_url, list_of_links_to_be_completed, list_of_links_completed = setup()
-    
+
     while len(list_of_links_to_be_completed) > 0:
+        t1 = time.perf_counter()
+
+        # s = requests.Session()
+
         parse = HTML_parsing.HtmlParsing()
         continue_collecting_data, page_html = parse.request_html(my_url)
 
@@ -28,6 +36,8 @@ def main():
 
         else:  # The line below is neccessary (I want it to get a connection error and loop back and error again so I know it's not an internet issue)
             print("Connection error: ", my_url)
+
+        print(time.perf_counter() - t1)
 
 
 main()

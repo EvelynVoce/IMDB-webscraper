@@ -32,3 +32,22 @@ class HtmlParsing:
             met_requirements = True
 
         return met_requirements
+
+    @staticmethod
+    def get_title_and_date(page_soup, tv_series=0):
+        if not tv_series:
+            title_div_tag = page_soup.find("div", {"class": "TitleBlock__TitleContainer-sc-1nlhx7j-1 jxsVNt"})
+            title = title_div_tag.find("h1").text
+
+            date_div = page_soup.find("div", {"class": "TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-2 hWHMKr"})
+            date = date_div.find("a").text
+
+        else:
+            title_div_tag = page_soup.find("div", {"class": "TitleBlock__TitleContainer-sc-1nlhx7j-1 jxsVNt"})
+            title = title_div_tag.find("h1").text
+            date = "" # TV shows come with date range which isn't required for this application
+
+        title = title.strip()
+        date = date.strip()
+        print(title, date)
+        return title, date
