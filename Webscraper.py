@@ -14,9 +14,9 @@ def setup():
 
 
 def get_data(parse, page_soup):
-    met_requirements = parse.get_amount_of_reviews(page_soup)
+    met_requirements = parse.has_met_requirements(page_soup)
     if met_requirements:
-        title, date = parse.get_title_and_date(page_soup)
+        parse.get_title_and_date(page_soup)
 
 
 def main():

@@ -1,7 +1,7 @@
-import requests
-
-
 class HtmlParsing:
+    met_requirements = False
+    title = ""
+    date = ""
 
     @staticmethod
     def request_html(my_url, session):
@@ -15,10 +15,8 @@ class HtmlParsing:
             # print("CONNECTION ERROR")
         return continue_collecting_data, page_html
 
-    @staticmethod
-    def get_amount_of_reviews(page_soup) -> bool:
+    def has_met_requirements(self, page_soup):
         amount_of_user_reviews_span = page_soup.find("span", {"class": "score"}).text
-        met_requirements = False
 
         if amount_of_user_reviews_span[-1] == "K":
             thousands_of_reviews = amount_of_user_reviews_span.strip("K")
@@ -29,26 +27,26 @@ class HtmlParsing:
         print("User reviews", amount_of_user_reviews)
 
         if amount_of_user_reviews > 250:
-            met_requirements = True
+            self.met_requirements = True
 
-        return met_requirements
+        return self.met_requirements
 
+    def set_title(self, page_soup):
+        title_div_tag = page_soup.find("div", {"class": "TitleBlock__TitleContainer-sc-1nlhx7j-1 jxsVNt"})
+        self.title = title_div_tag.find("h1").text
 
-    @staticmethod
-    def get_title_and_date(page_soup, tv_series=0):
+    def set_date(self, page_soup):
+        date_div = page_soup.find("div", {"class": "TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-2 hWHMKr"})
+        self.date = date_div.find("a").text
+
+    def get_title_and_date(self, page_soup, tv_series=0):
+        self.set_title(page_soup)
         if not tv_series:
-            title_div_tag = page_soup.find("div", {"class": "TitleBlock__TitleContainer-sc-1nlhx7j-1 jxsVNt"})
-            title = title_div_tag.find("h1").text
-
-            date_div = page_soup.find("div", {"class": "TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-2 hWHMKr"})
-            date = date_div.find("a").text
+            self.set_date(page_soup)
 
         else:
-            title_div_tag = page_soup.find("div", {"class": "TitleBlock__TitleContainer-sc-1nlhx7j-1 jxsVNt"})
-            title = title_div_tag.find("h1").text
-            date = "" # TV shows come with date range which isn't required for this application
+            self.date = ""  # TV shows come with date range which isn't required for this application
 
-        title = title.strip()
-        date = date.strip()
-        print(title, date)
-        return title, date
+        self.title = self.title.strip()
+        self.date = self.date.strip()
+        print(self.title, self.date)
