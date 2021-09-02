@@ -1,10 +1,15 @@
+import requests
+
+session = requests.Session()
+
+
 class HtmlParsing:
     met_requirements = False
     title = ""
     date = ""
 
     @staticmethod
-    def request_html(my_url, session):
+    def request_html(my_url):
         continue_collecting_data = True
         page_html = None
         # try:
@@ -24,7 +29,7 @@ class HtmlParsing:
         else:
             amount_of_user_reviews = int(amount_of_user_reviews_span)
 
-        print("User reviews", amount_of_user_reviews)
+        # print("User reviews", amount_of_user_reviews)
 
         if amount_of_user_reviews > 250:
             self.met_requirements = True
@@ -33,11 +38,12 @@ class HtmlParsing:
 
     def set_title(self, page_soup):
         title_div_tag = page_soup.find("div", {"class": "TitleBlock__TitleContainer-sc-1nlhx7j-1 jxsVNt"})
-        self.title = title_div_tag.find("h1").text
+        self.title = title_div_tag.find("h1").text.strip()
+        print(self.title, flush=True)
 
     def set_date(self, page_soup):
         date_div = page_soup.find("div", {"class": "TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-2 hWHMKr"})
-        self.date = date_div.find("a").text
+        self.date = date_div.find("a").text.strip()
 
     def get_title_and_date(self, page_soup, tv_series=0):
         self.set_title(page_soup)
@@ -47,6 +53,4 @@ class HtmlParsing:
         else:
             self.date = ""  # TV shows come with date range which isn't required for this application
 
-        self.title = self.title.strip()
-        self.date = self.date.strip()
-        print(self.title, self.date)
+        # print(self.title, self.date)
