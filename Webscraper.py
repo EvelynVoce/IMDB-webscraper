@@ -12,7 +12,7 @@ def setup():
         list_of_links_completed = films_done.read().splitlines()
     with open("film_incompleted.txt", "r") as films_not_done:
         list_of_links_to_be_completed = films_not_done.read().splitlines()
-    return list_of_links_to_be_completed[0], list_of_links_to_be_completed, list_of_links_completed
+    return list_of_links_to_be_completed, list_of_links_completed
 
 
 def get_data(parse, page_soup):
@@ -23,6 +23,7 @@ def get_data(parse, page_soup):
         parse.get_writers_and_directors(page_soup)
         parse.get_cast(page_soup)
         parse.get_related_films(page_soup)
+        parse.get_related_urls(page_soup)
 
 
 def fetch(link):
@@ -41,7 +42,9 @@ def fetch(link):
 
 
 def main():
-    my_url, list_of_links_to_be_completed, list_of_links_completed = setup()
+    list_of_links_to_be_completed, list_of_links_completed = setup()
+    my_url = list_of_links_to_be_completed[0]
+
     t1 = time.perf_counter()
     with ThreadPoolExecutor(10) as p:
         p.map(fetch, list_of_links_to_be_completed)
@@ -52,6 +55,9 @@ def main():
         print(x.date)
         print(x.related_films, "\n")
 
+    for checked_film in list_of_film_data:
+        print(checked_film.links_to_related_films)
+        
 
     # while len(list_of_links_to_be_completed) > 0:
     #     t1 = time.perf_counter()

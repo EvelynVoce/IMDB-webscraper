@@ -15,6 +15,7 @@ class HtmlParsing:
         self.writers = ""
         self.cast = ""
         self.related_films = ""
+        self.links_to_related_films = []
 
     @staticmethod
     def request_html(my_url):
@@ -111,3 +112,11 @@ class HtmlParsing:
         for film in liked_films_all_data:
             list_of_related_films.append(film.text)
         self.related_films = self.list_to_string(list_of_related_films)
+
+    def get_related_urls(self, page_soup):
+        related_films_div = page_soup.findAll("div", {"class": "ipc-poster ipc-poster--base ipc-poster--dynamic-width ipc-poster-card__poster ipc-sub-grid-item ipc-sub-grid-item--span-2"})
+        for div in related_films_div:
+            related_film_a_tags = div.findAll("a", {"class": "ipc-lockup-overlay ipc-focusable"})
+            for link in related_film_a_tags:
+                new_link = 'https://www.imdb.com' + link['href']
+                self.links_to_related_films.append(new_link)
