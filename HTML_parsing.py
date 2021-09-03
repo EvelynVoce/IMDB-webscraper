@@ -10,6 +10,12 @@ class HtmlParsing:
         self.title = ""
         self.date = ""
         self.genres = ""
+        self.directors = ""
+        self.writers = ""
+        self.cast = ""
+
+    def print_stats(self):
+        print(self.title, self.directors, self.writers, self.cast)
 
     @staticmethod
     def request_html(my_url):
@@ -22,6 +28,14 @@ class HtmlParsing:
             # continue_collecting_data = False
             # print("CONNECTION ERROR")
         return continue_collecting_data, page_html
+
+    @staticmethod
+    def list_to_string(input_list):
+        converted_string = str(input_list)
+        for ch in ['[', ']', "'", '"']:
+            if ch in converted_string:
+                converted_string = converted_string.replace(ch, '')
+        return converted_string
 
     def has_met_requirements(self, page_soup):
         amount_of_user_reviews_span = page_soup.find("span", {"class": "score"}).text
@@ -42,7 +56,6 @@ class HtmlParsing:
     def set_title(self, page_soup):
         title_div_tag = page_soup.find("div", {"class": "TitleBlock__TitleContainer-sc-1nlhx7j-1 jxsVNt"})
         self.title = title_div_tag.find("h1").text.strip()
-        print(self.title, flush=True)
 
     def set_date(self, page_soup):
         date_div = page_soup.find("div", {"class": "TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-2 hWHMKr"})
@@ -52,16 +65,35 @@ class HtmlParsing:
         self.set_title(page_soup)
         if not tv_series:
             self.set_date(page_soup)
-        # print(self.title, self.date)
 
     def get_genre(self, page_soup):
         genre_div = page_soup.find("div", {"class": "ipc-chip-list GenresAndPlot__GenresChipList-cum89p-4 gtBDBL"})
         genres_a_tags = genre_div.findAll("a")
         genres_list = [genre.text for genre in genres_a_tags]
-        genres_text = str(genres_list)
+        self.genres = self.list_to_string(genres_list)
 
-        for ch in ['[', ']', "'", '"']:
-            if ch in genres_text:
-                genres_text = genres_text.replace(ch, '')
+    def get_writers_and_directors(self, page_soup):
+        # Credits for directors and writers
+        directors = []
+        writers = []
 
-        self.genres = genres_text
+        credit_divs = page_soup.findAll("div", {"class": "ipc-metadata-list-item__content-container"})
+        for div in range(3):
+            credit_div_a = credit_divs[div].findAll("a")
+            for name in credit_div_a:
+                if "more credit" not in name.text:
+                    # Program only needs each credited name once
+                    if div == 0 and name not in directors:
+                        directors.append(name.text)
+                    elif div == 1 and name not in writers:
+                        writers.append(name.text)
+
+        self.directors = self.list_to_string(directors)
+        self.writers = self.list_to_string(writers)
+
+    def get_cast(self, page_soup):
+        cast = []
+        cast_name_tags = page_soup.findAll("a", {"class": "StyledComponents__ActorName-y9ygcu-1 eyqFnv"})
+        for actor in cast_name_tags:
+            cast.append(actor.text)
+        self.cast = self.list_to_string(cast)

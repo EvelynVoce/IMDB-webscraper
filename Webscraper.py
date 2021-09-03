@@ -20,6 +20,9 @@ def get_data(parse, page_soup):
     if met_requirements:
         parse.get_genre(page_soup)
         parse.get_title_and_date(page_soup)
+        parse.get_writers_and_directors(page_soup)
+        parse.get_cast(page_soup)
+        parse.print_stats()
 
 
 def fetch(link):
