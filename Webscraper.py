@@ -18,6 +18,7 @@ def setup():
 def get_data(parse, page_soup):
     met_requirements = parse.has_met_requirements(page_soup)
     if met_requirements:
+        parse.get_genre(page_soup)
         parse.get_title_and_date(page_soup)
 
 
@@ -43,7 +44,7 @@ def main():
     print(time.perf_counter() - t1, "\n\n")
 
     for x in list_of_film_data:
-        print(x.title)
+        print(x.title, x.date, x.genres)
 
 
     # while len(list_of_links_to_be_completed) > 0:

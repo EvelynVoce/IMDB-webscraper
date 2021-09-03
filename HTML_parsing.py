@@ -4,9 +4,12 @@ session = requests.Session()
 
 
 class HtmlParsing:
-    met_requirements = False
-    title = ""
-    date = ""
+
+    def __init__(self):
+        self.met_requirements = False
+        self.title = ""
+        self.date = ""
+        self.genres = ""
 
     @staticmethod
     def request_html(my_url):
@@ -49,8 +52,16 @@ class HtmlParsing:
         self.set_title(page_soup)
         if not tv_series:
             self.set_date(page_soup)
-
-        else:
-            self.date = ""  # TV shows come with date range which isn't required for this application
-
         # print(self.title, self.date)
+
+    def get_genre(self, page_soup):
+        genre_div = page_soup.find("div", {"class": "ipc-chip-list GenresAndPlot__GenresChipList-cum89p-4 gtBDBL"})
+        genres_a_tags = genre_div.findAll("a")
+        genres_list = [genre.text for genre in genres_a_tags]
+        genres_text = str(genres_list)
+
+        for ch in ['[', ']', "'", '"']:
+            if ch in genres_text:
+                genres_text = genres_text.replace(ch, '')
+
+        self.genres = genres_text
