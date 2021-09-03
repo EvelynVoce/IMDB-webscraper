@@ -22,7 +22,7 @@ def get_data(parse, page_soup):
         parse.get_title_and_date(page_soup)
         parse.get_writers_and_directors(page_soup)
         parse.get_cast(page_soup)
-        parse.print_stats()
+        parse.get_related_films(page_soup)
 
 
 def fetch(link):
@@ -37,6 +37,7 @@ def fetch(link):
         print("Connection error: ", link)
 
     list_of_film_data.append(parse)
+    gc.collect()
 
 
 def main():
@@ -47,7 +48,7 @@ def main():
     print(time.perf_counter() - t1, "\n\n")
 
     for x in list_of_film_data:
-        print(x.title, x.date, x.genres)
+        print(x.title, x.date, x.related_films)
 
 
     # while len(list_of_links_to_be_completed) > 0:

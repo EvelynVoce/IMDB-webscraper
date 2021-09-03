@@ -13,9 +13,7 @@ class HtmlParsing:
         self.directors = ""
         self.writers = ""
         self.cast = ""
-
-    def print_stats(self):
-        print(self.title, self.directors, self.writers, self.cast)
+        self.related_films = ""
 
     @staticmethod
     def request_html(my_url):
@@ -35,6 +33,8 @@ class HtmlParsing:
         for ch in ['[', ']', "'", '"']:
             if ch in converted_string:
                 converted_string = converted_string.replace(ch, '')
+
+        converted_string = converted_string.replace(',', ';')
         return converted_string
 
     def has_met_requirements(self, page_soup):
@@ -46,11 +46,8 @@ class HtmlParsing:
         else:
             amount_of_user_reviews = int(amount_of_user_reviews_span)
 
-        # print("User reviews", amount_of_user_reviews)
-
         if amount_of_user_reviews > 250:
             self.met_requirements = True
-
         return self.met_requirements
 
     def set_title(self, page_soup):
@@ -97,3 +94,11 @@ class HtmlParsing:
         for actor in cast_name_tags:
             cast.append(actor.text)
         self.cast = self.list_to_string(cast)
+
+    def get_related_films(self, page_soup):
+        # Find related films and find new films to check
+        list_of_related_films = []
+        liked_films_all_data = page_soup.findAll("span", {"data-testid": "title"})
+        for film in liked_films_all_data:
+            list_of_related_films.append(film.text)
+        self.related_films = self.list_to_string(list_of_related_films)
