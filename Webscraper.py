@@ -3,6 +3,7 @@ import gc  # garbage collector - really useful for RAM management
 import HTML_parsing
 import time
 from concurrent.futures import ThreadPoolExecutor
+import file_handling
 
 list_of_film_data = []
 
@@ -27,8 +28,8 @@ def get_data(parse, page_soup):
 
 
 def fetch(link):
-    parse = HTML_parsing.HtmlParsing()
-    continue_collecting_data, page_html = parse.request_html(link)
+    parse = HTML_parsing.HtmlParsing(link)
+    continue_collecting_data, page_html = parse.request_html()
 
     if continue_collecting_data:
         page_soup = Soup(page_html, "lxml")
@@ -42,22 +43,23 @@ def fetch(link):
 
 
 def main():
-    list_of_links_to_be_completed, list_of_links_completed = setup()
-    my_url = list_of_links_to_be_completed[0]
+    while 1:
+        list_of_links_to_be_completed, list_of_links_completed = setup()
+        print(len(list_of_links_to_be_completed))
+        for index, link in enumerate(list_of_links_to_be_completed):
+            if link in list_of_links_completed:
+                list_of_links_to_be_completed.pop(index)
+        print(len(list_of_links_to_be_completed))
+        t1 = time.perf_counter()
+        with ThreadPoolExecutor(10) as p:
+            p.map(fetch, list_of_links_to_be_completed)
+        print(time.perf_counter() - t1, "\n\n")
 
-    t1 = time.perf_counter()
-    with ThreadPoolExecutor(10) as p:
-        p.map(fetch, list_of_links_to_be_completed)
-    print(time.perf_counter() - t1, "\n\n")
+        for x in list_of_film_data:
+            print(x.title)
 
-    for x in list_of_film_data:
-        print(x.title)
-        print(x.date)
-        print(x.related_films, "\n")
+        file_handling.update_text_files(list_of_film_data)
 
-    for checked_film in list_of_film_data:
-        print(checked_film.links_to_related_films)
-        
 
     # while len(list_of_links_to_be_completed) > 0:
     #     t1 = time.perf_counter()

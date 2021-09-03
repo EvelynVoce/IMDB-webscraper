@@ -5,7 +5,8 @@ session = requests.Session()
 
 class HtmlParsing:
 
-    def __init__(self):
+    def __init__(self, my_url):
+        self.my_url = my_url
         self.met_requirements = False
         self.tv_series = False
         self.title = ""
@@ -17,12 +18,11 @@ class HtmlParsing:
         self.related_films = ""
         self.links_to_related_films = []
 
-    @staticmethod
-    def request_html(my_url):
+    def request_html(self):
         continue_collecting_data = True
         page_html = None
         # try:
-        page_html = session.get(my_url, stream=True).text
+        page_html = session.get(self.my_url, stream=True).text
 
         # except:
             # continue_collecting_data = False
