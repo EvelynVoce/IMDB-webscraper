@@ -7,6 +7,7 @@ class HtmlParsing:
 
     def __init__(self):
         self.met_requirements = False
+        self.tv_series = False
         self.title = ""
         self.date = ""
         self.genres = ""
@@ -58,15 +59,23 @@ class HtmlParsing:
         date_div = page_soup.find("div", {"class": "TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-2 hWHMKr"})
         self.date = date_div.find("a").text.strip()
 
-    def get_title_and_date(self, page_soup, tv_series=0):
+    def get_title_and_date(self, page_soup):
         self.set_title(page_soup)
-        if not tv_series:
+        if not self.tv_series:
             self.set_date(page_soup)
 
     def get_genre(self, page_soup):
         genre_div = page_soup.find("div", {"class": "ipc-chip-list GenresAndPlot__GenresChipList-cum89p-4 gtBDBL"})
         genres_a_tags = genre_div.findAll("a")
         genres_list = [genre.text for genre in genres_a_tags]
+
+        div_tag = page_soup.find("div", {"class": "TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-2 hWHMKr"})
+        list_tags = div_tag.findAll("li")
+        for tag in list_tags:
+            if tag.text == "TV Series" or tag.text == "TV Mini Series":
+                self.tv_series = True
+                genres_list.append("TV Series")
+
         self.genres = self.list_to_string(genres_list)
 
     def get_writers_and_directors(self, page_soup):

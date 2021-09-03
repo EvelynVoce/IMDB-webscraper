@@ -48,7 +48,9 @@ def main():
     print(time.perf_counter() - t1, "\n\n")
 
     for x in list_of_film_data:
-        print(x.title, x.date, x.related_films)
+        print(x.title)
+        print(x.date)
+        print(x.related_films, "\n")
 
 
     # while len(list_of_links_to_be_completed) > 0:
