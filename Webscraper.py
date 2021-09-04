@@ -21,6 +21,7 @@ def get_data(parse, page_soup):
     if met_requirements:
         parse.get_genre(page_soup)
         parse.get_title_and_date(page_soup)
+        parse.get_rating(page_soup)
         parse.get_writers_and_directors(page_soup)
         parse.get_cast(page_soup)
         parse.get_related_films(page_soup)
@@ -34,49 +35,31 @@ def fetch(link):
     if continue_collecting_data:
         page_soup = Soup(page_html, "lxml")
         get_data(parse, page_soup)
+        list_of_film_data.append(parse)
+        gc.collect()
 
     else:  # The line below is neccessary (I want it to get a connection error and loop back and error again so I know it's not an internet issue)
         print("Connection error: ", link)
 
-    list_of_film_data.append(parse)
-    gc.collect()
-
 
 def main():
     while 1:
+        list_of_film_data.clear()
         list_of_links_to_be_completed, list_of_links_completed = setup()
-        print(len(list_of_links_to_be_completed))
-        for index, link in enumerate(list_of_links_to_be_completed):
-            if link in list_of_links_completed:
-                list_of_links_to_be_completed.pop(index)
-        print(len(list_of_links_to_be_completed))
+        list_of_links_to_be_completed[:] = [x for x in list_of_links_to_be_completed if x not in list_of_links_completed]
+        set_of_links_to_be_completed = set(list_of_links_to_be_completed)
+
         t1 = time.perf_counter()
         with ThreadPoolExecutor(10) as p:
-            p.map(fetch, list_of_links_to_be_completed)
+            p.map(fetch, set_of_links_to_be_completed)
         print(time.perf_counter() - t1, "\n\n")
 
         for x in list_of_film_data:
-            print(x.title)
+            if x.rating == 0:
+                print(x.title)
 
-        file_handling.update_text_files(list_of_film_data)
-
-
-    # while len(list_of_links_to_be_completed) > 0:
-    #     t1 = time.perf_counter()
-    #
-    #     parse = HTML_parsing.HtmlParsing()
-    #     continue_collecting_data, page_html = parse.request_html(my_url, session)
-    #
-    #     if continue_collecting_data:
-    #         page_soup = Soup(page_html, "lxml")
-    #         get_data(parse, page_soup)
-    #
-    #     else:  # The line below is neccessary (I want it to get a connection error and loop back and error again so I know it's not an internet issue)
-    #         print("Connection error: ", my_url)
-    #
-    #     print(time.perf_counter() - t1)
-    #     list_of_links_to_be_completed.pop(0)
-    #     my_url = list_of_links_to_be_completed[0]
+        file_handling.write_film_data(list_of_film_data)
+        file_handling.update_text_files(list_of_film_data, set_of_links_to_be_completed)
 
 
 if __name__ == '__main__':

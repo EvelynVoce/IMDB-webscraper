@@ -11,6 +11,7 @@ class HtmlParsing:
         self.tv_series = False
         self.title = ""
         self.date = ""
+        self.rating = 0
         self.genres = ""
         self.directors = ""
         self.writers = ""
@@ -65,6 +66,10 @@ class HtmlParsing:
         if not self.tv_series:
             self.set_date(page_soup)
 
+    def get_rating(self, page_soup):
+        required_class_string = "AggregateRatingButton__RatingScore-sc-1ll29m0-1 iTLWoV"
+        self.rating = page_soup.find("span", {"class": required_class_string}).text
+
     def get_genre(self, page_soup):
         genre_div = page_soup.find("div", {"class": "ipc-chip-list GenresAndPlot__GenresChipList-cum89p-4 gtBDBL"})
         genres_a_tags = genre_div.findAll("a")
@@ -118,5 +123,6 @@ class HtmlParsing:
         for div in related_films_div:
             related_film_a_tags = div.findAll("a", {"class": "ipc-lockup-overlay ipc-focusable"})
             for link in related_film_a_tags:
-                new_link = 'https://www.imdb.com' + link['href']
+                important_link, _ = link['href'].split("?")
+                new_link = 'https://www.imdb.com' + important_link
                 self.links_to_related_films.append(new_link)
