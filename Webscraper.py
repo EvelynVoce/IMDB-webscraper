@@ -42,9 +42,9 @@ def fetch(link):
 def main():
     while 1:
         list_of_film_data.clear()
-        list_of_links_to_be_completed, list_of_links_completed = setup()
-        list_of_links_to_be_completed[:] = [x for x in list_of_links_to_be_completed if x not in list_of_links_completed]
-        set_of_links_to_be_completed = set(list_of_links_to_be_completed)
+        links_to_be_completed, list_of_links_completed = setup()
+        links_to_be_completed[:] = [x for x in links_to_be_completed if x not in list_of_links_completed]
+        set_of_links_to_be_completed = set(links_to_be_completed)
 
         t1 = time.perf_counter()
         with ThreadPoolExecutor(10) as p:

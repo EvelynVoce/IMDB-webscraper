@@ -36,7 +36,7 @@ class HtmlParsing:
         return converted_string
 
     def has_met_requirements(self, page_soup):
-        minimum_user_reviews = 150
+        minimum_amount_user_reviews = 150
         amount_of_user_reviews_span = page_soup.find("span", {"class": "score"}).text
 
         if amount_of_user_reviews_span[-1] == "K":
@@ -45,7 +45,7 @@ class HtmlParsing:
         else:
             amount_of_user_reviews = int(amount_of_user_reviews_span)
 
-        if amount_of_user_reviews > minimum_user_reviews:
+        if amount_of_user_reviews > minimum_amount_user_reviews:
             self.met_requirements = True
         return self.met_requirements
 
@@ -71,12 +71,11 @@ class HtmlParsing:
         genres_a_tags = genre_div.findAll("a")
         genres_list = [genre.text for genre in genres_a_tags]
 
-        div_tag = page_soup.find("div", {"class": "TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-2 hWHMKr"})
-        list_tags = div_tag.findAll("li")
-        for tag in list_tags:
-            if tag.text == "TV Series" or tag.text == "TV Mini Series":
-                self.tv_series = True
-                genres_list.append("TV Series")
+        tv_tag = page_soup.find("li", text="TV Series")
+        tv_mini_tag = page_soup.find("li", text="TV Mini Series")
+        if tv_tag or tv_mini_tag:
+            self.tv_series = True
+            genres_list.append("TV Series")
 
         self.genres = self.list_to_string(genres_list)
 
