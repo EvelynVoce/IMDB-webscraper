@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup as Soup
-import gc  # garbage collector - really useful for RAM management
 import HTML_parsing
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -28,15 +27,12 @@ def get_data(parse, page_soup):
 
 def fetch(link):
     parse = HTML_parsing.HtmlParsing(link)
-    continue_collecting_data, page_html = parse.request_html()
-
-    if continue_collecting_data:
-        page_soup = Soup(page_html, "lxml")
+    page_html = parse.request_html()
+    page_soup = Soup(page_html, "lxml")
+    met_requirements = parse.has_met_requirements(page_soup)
+    if met_requirements:
         get_data(parse, page_soup)
-        met_requirements = parse.has_met_requirements(page_soup)
-        if met_requirements:
-            list_of_film_data.append(parse)
-            gc.collect()
+        list_of_film_data.append(parse)
 
 
 def main():
@@ -51,12 +47,9 @@ def main():
             p.map(fetch, set_of_links_to_be_completed)
         print(time.perf_counter() - t1, "\n\n")
 
-        for x in list_of_film_data:
-            if x.rating == 0:
-                print(x.my_url)
-
         file_handling.write_film_data(list_of_film_data)
         file_handling.update_text_files(list_of_film_data, set_of_links_to_be_completed)
+        print("Iteration complete")
 
 
 if __name__ == '__main__':

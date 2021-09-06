@@ -8,7 +8,6 @@ class HtmlParsing:
 
     def __init__(self, my_url):
         self.my_url = my_url
-        self.met_requirements = False
         self.tv_series = False
         self.title = ""
         self.date = ""
@@ -21,9 +20,8 @@ class HtmlParsing:
         self.links_to_related_films = []
 
     def request_html(self):
-        continue_collecting_data = True
         page_html = session.get(self.my_url, stream=True).text
-        return continue_collecting_data, page_html
+        return page_html
 
     @staticmethod
     def list_to_string(input_list):
@@ -35,8 +33,8 @@ class HtmlParsing:
         converted_string = converted_string.replace(',', ';')
         return converted_string
 
-    def has_met_requirements(self, page_soup):
-        minimum_amount_user_reviews = 150
+    @staticmethod
+    def has_met_requirements(page_soup):
         amount_of_user_reviews_span = page_soup.find("span", {"class": "score"}).text
 
         if amount_of_user_reviews_span[-1] == "K":
@@ -45,9 +43,8 @@ class HtmlParsing:
         else:
             amount_of_user_reviews = int(amount_of_user_reviews_span)
 
-        if amount_of_user_reviews > minimum_amount_user_reviews:
-            self.met_requirements = True
-        return self.met_requirements
+        minimum_amount_user_reviews = 150
+        return amount_of_user_reviews > minimum_amount_user_reviews
 
     def set_title(self, page_soup):
         title_div_tag = page_soup.find("div", {"class": "TitleBlock__TitleContainer-sc-1nlhx7j-1 jxsVNt"})
@@ -111,10 +108,11 @@ class HtmlParsing:
         self.related_films = self.list_to_string(list_of_related_films)
 
     def get_related_urls(self, page_soup):
+        root_link = "https://www.imdb.com"
         related_films_div = page_soup.findAll("div", {"class": "ipc-poster ipc-poster--base ipc-poster--dynamic-width ipc-poster-card__poster ipc-sub-grid-item ipc-sub-grid-item--span-2"})
         for div in related_films_div:
             related_film_a_tags = div.findAll("a", {"class": "ipc-lockup-overlay ipc-focusable"})
             for link in related_film_a_tags:
                 important_link, _ = link['href'].split("?")
-                new_link = 'https://www.imdb.com' + important_link
+                new_link = root_link + important_link
                 self.links_to_related_films.append(new_link)
