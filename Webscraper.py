@@ -17,15 +17,13 @@ def setup():
 
 
 def get_data(parse, page_soup):
-    met_requirements = parse.has_met_requirements(page_soup)
-    if met_requirements:
-        parse.get_genre(page_soup)
-        parse.get_title_and_date(page_soup)
-        parse.get_rating(page_soup)
-        parse.get_writers_and_directors(page_soup)
-        parse.get_cast(page_soup)
-        parse.get_related_films(page_soup)
-        parse.get_related_urls(page_soup)
+    parse.get_genre(page_soup)
+    parse.get_title_and_date(page_soup)
+    parse.get_rating(page_soup)
+    parse.get_writers_and_directors(page_soup)
+    parse.get_cast(page_soup)
+    parse.get_related_films(page_soup)
+    parse.get_related_urls(page_soup)
 
 
 def fetch(link):
@@ -35,11 +33,10 @@ def fetch(link):
     if continue_collecting_data:
         page_soup = Soup(page_html, "lxml")
         get_data(parse, page_soup)
-        list_of_film_data.append(parse)
-        gc.collect()
-
-    else:  # The line below is neccessary (I want it to get a connection error and loop back and error again so I know it's not an internet issue)
-        print("Connection error: ", link)
+        met_requirements = parse.has_met_requirements(page_soup)
+        if met_requirements:
+            list_of_film_data.append(parse)
+            gc.collect()
 
 
 def main():
@@ -56,7 +53,7 @@ def main():
 
         for x in list_of_film_data:
             if x.rating == 0:
-                print(x.title)
+                print(x.my_url)
 
         file_handling.write_film_data(list_of_film_data)
         file_handling.update_text_files(list_of_film_data, set_of_links_to_be_completed)

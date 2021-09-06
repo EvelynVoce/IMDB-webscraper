@@ -1,4 +1,5 @@
 import requests
+import profiler
 
 session = requests.Session()
 
@@ -21,13 +22,7 @@ class HtmlParsing:
 
     def request_html(self):
         continue_collecting_data = True
-        page_html = None
-        # try:
         page_html = session.get(self.my_url, stream=True).text
-
-        # except:
-            # continue_collecting_data = False
-            # print("CONNECTION ERROR")
         return continue_collecting_data, page_html
 
     @staticmethod
@@ -41,6 +36,7 @@ class HtmlParsing:
         return converted_string
 
     def has_met_requirements(self, page_soup):
+        minimum_user_reviews = 150
         amount_of_user_reviews_span = page_soup.find("span", {"class": "score"}).text
 
         if amount_of_user_reviews_span[-1] == "K":
@@ -49,7 +45,7 @@ class HtmlParsing:
         else:
             amount_of_user_reviews = int(amount_of_user_reviews_span)
 
-        if amount_of_user_reviews > 250:
+        if amount_of_user_reviews > minimum_user_reviews:
             self.met_requirements = True
         return self.met_requirements
 
@@ -84,6 +80,7 @@ class HtmlParsing:
 
         self.genres = self.list_to_string(genres_list)
 
+    @profiler.profile
     def get_writers_and_directors(self, page_soup):
         # Credits for directors and writers
         directors = []
@@ -104,18 +101,14 @@ class HtmlParsing:
         self.writers = self.list_to_string(writers)
 
     def get_cast(self, page_soup):
-        cast = []
         cast_name_tags = page_soup.findAll("a", {"class": "StyledComponents__ActorName-y9ygcu-1 eyqFnv"})
-        for actor in cast_name_tags:
-            cast.append(actor.text)
+        cast = [actor.text for actor in cast_name_tags]
         self.cast = self.list_to_string(cast)
 
     def get_related_films(self, page_soup):
         # Find related films and find new films to check
-        list_of_related_films = []
         liked_films_all_data = page_soup.findAll("span", {"data-testid": "title"})
-        for film in liked_films_all_data:
-            list_of_related_films.append(film.text)
+        list_of_related_films = [film.text for film in liked_films_all_data]
         self.related_films = self.list_to_string(list_of_related_films)
 
     def get_related_urls(self, page_soup):
