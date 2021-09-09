@@ -1,4 +1,3 @@
-from bs4 import BeautifulSoup as Soup
 import HTML_parsing
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -15,23 +14,20 @@ def setup():
     return list_of_links_to_be_completed, list_of_links_completed
 
 
-def get_data(parse, page_soup):
-    parse.get_genre(page_soup)
-    parse.get_title_and_date(page_soup)
-    parse.get_rating(page_soup)
-    parse.get_writers_and_directors(page_soup)
-    parse.get_cast(page_soup)
-    parse.get_related_films(page_soup)
-    parse.get_related_urls(page_soup)
+def get_data(parse):
+    parse.get_genre()
+    parse.get_title_and_date()
+    parse.get_rating()
+    parse.get_writers_and_directors()
+    parse.get_cast()
+    parse.get_related_films()
+    parse.get_related_urls()
 
 
 def fetch(link):
     parse = HTML_parsing.HtmlParsing(link)
-    page_html = parse.request_html()
-    page_soup = Soup(page_html, "lxml")
-    met_requirements = parse.has_met_requirements(page_soup)
-    if met_requirements:
-        get_data(parse, page_soup)
+    if parse.met_requirements:
+        get_data(parse)
         list_of_film_data.append(parse)
 
 
@@ -39,8 +35,8 @@ def main():
     while 1:
         list_of_film_data.clear()
         links_to_be_completed, list_of_links_completed = setup()
-        links_to_be_completed[:] = [x for x in links_to_be_completed if x not in list_of_links_completed]
-        set_of_links_to_be_completed = set(links_to_be_completed)
+        links_to_be_completed[:] = {x for x in links_to_be_completed if x not in list_of_links_completed}
+        set_of_links_to_be_completed = set(links_to_be_completed)  # Already a set now
 
         t1 = time.perf_counter()
         with ThreadPoolExecutor(10) as p:
