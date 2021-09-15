@@ -85,38 +85,16 @@ class HtmlParsing:
         self.genres = self.list_to_string(genres_list)
 
     def get_writers_and_directors(self):
-        # Credits for directors and writers
-        directors = []
-        writers = []
-
-        credit_divs = self.page_soup.findAll("div", {"class": "ipc-metadata-list-item__content-container"})
-        for div in range(3):
-            credit_div_a = credit_divs[div].findAll("a")
-            for name in credit_div_a:
-                if "more credit" not in name.text:
-                    # Program only needs each credited name once
-                    if div == 0 and name not in directors:
-                        directors.append(name.text)
-                    elif div == 1 and name not in writers:
-                        writers.append(name.text)
-
-        self.directors = self.list_to_string(directors)
-        self.writers = self.list_to_string(writers)
-
-    def get_writers_or_directors(self):
         credit_divs = self.page_soup.findAll("div", {"class": "ipc-metadata-list-item__content-container"})
 
-        for x in range(2):
-            temporary_list = []
-            credit_div_a = credit_divs[x].findAll("a")
-            for name in credit_div_a:
-                if ("more credit" not in name.text) and (name.text not in temporary_list):
-                    temporary_list.append(name.text)
+        for index, div in enumerate(credit_divs[:2]):
+            credit_div_a = div.findAll("a")
+            temporary_set = {name.text for name in credit_div_a if "more credit" not in name.text}
 
-            if x == 0:
-                self.directors = self.list_to_string(temporary_list)
-            elif x == 1:
-                self.writers = self.list_to_string(temporary_list)
+            if index == 0:
+                self.directors = self.list_to_string(temporary_set)
+            elif index == 1:
+                self.writers = self.list_to_string(temporary_set)
 
     def get_cast(self):
         cast_name_tags = self.page_soup.findAll("a", {"class": "StyledComponents__ActorName-y9ygcu-1 eyqFnv"})
@@ -131,7 +109,9 @@ class HtmlParsing:
 
     def get_related_urls(self):
         root_link = "https://www.imdb.com"
-        related_films_div = self.page_soup.findAll("div", {"class": "ipc-poster ipc-poster--base ipc-poster--dynamic-width ipc-poster-card__poster ipc-sub-grid-item ipc-sub-grid-item--span-2"})
+        related_films_div = self.page_soup.findAll("div", {"class": "ipc-poster ipc-poster--base ipc-poster--dynamic"
+                                                                    "-width ipc-poster-card__poster ipc-sub-grid-item"
+                                                                    " ipc-sub-grid-item--span-2"})
         for div in related_films_div:
             related_film_a_tags = div.findAll("a", {"class": "ipc-lockup-overlay ipc-focusable"})
             for link in related_film_a_tags:
