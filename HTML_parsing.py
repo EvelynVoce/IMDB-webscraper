@@ -31,8 +31,7 @@ class HtmlParsing:
         return converted_string
 
     def request_html(self):
-        page_html = self.session.get(self.my_url, stream=True).text
-        return page_html
+        return self.session.get(self.my_url, stream=True).text
 
     def has_met_requirements(self):
         amount_of_user_reviews_span = self.page_soup.find("span", {"class": "score"}).text
