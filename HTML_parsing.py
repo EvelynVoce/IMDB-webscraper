@@ -1,12 +1,13 @@
-import requests
+from requests import Session
 from bs4 import BeautifulSoup as Soup
 
 
 class HtmlParsing:
-    session = requests.Session()
+    session = Session()
 
     def __init__(self, my_url):
         self.my_url = my_url
+
         page_html = self.request_html()
         self.page_soup = Soup(page_html, "lxml")
         self.met_requirements = self.has_met_requirements()
@@ -80,7 +81,6 @@ class HtmlParsing:
 
     def get_writers_and_directors(self):
         credit_divs = self.page_soup.findAll("div", {"class": "ipc-metadata-list-item__content-container"})
-
         for index, div in enumerate(credit_divs[:2]):
             credit_div_a = div.findAll("a")
             temporary_set = {name.text for name in credit_div_a if "more credit" not in name.text}

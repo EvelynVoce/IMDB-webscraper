@@ -1,5 +1,5 @@
-import csv
-import os
+from csv import DictWriter
+from os import path
 
 
 def read_file(file_name):
@@ -9,10 +9,10 @@ def read_file(file_name):
 
 def write_film_data(list_of_film_data):
     fieldnames = ['title', 'release date', 'rating', 'genres', 'directors', 'writers', 'cast_names', 'related films']
-    file_exists = os.path.isfile('films_data.csv')
+    file_exists = path.isfile('films_data.csv')
 
     with open('films_data.csv', 'a', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer = DictWriter(file, fieldnames=fieldnames)
         if not file_exists:
             writer.writeheader()
 

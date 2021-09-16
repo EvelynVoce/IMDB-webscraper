@@ -1,13 +1,12 @@
 from time import perf_counter
-from concurrent.futures import ThreadPoolExecutor
 from profiler import profile
+from concurrent.futures import ThreadPoolExecutor
 import HTML_parsing
 import file_handling
 
 list_of_film_data = []
 
 
-# @profile
 def get_data(parse):
     parse.get_genre()
     parse.get_title_and_date()
@@ -18,6 +17,7 @@ def get_data(parse):
     parse.get_related_urls()
 
 
+@profile
 def fetch(link):
     parse = HTML_parsing.HtmlParsing(link)
     if parse.met_requirements:
@@ -27,9 +27,13 @@ def fetch(link):
 
 def main():
     while 1:
-        list_of_film_data.clear()
-        list_of_links_completed = file_handling.read_file("film_completed.txt")
         links_to_be_completed = file_handling.read_file("film_incompleted.txt")
+        if len(links_to_be_completed) == 0:
+            break
+
+        list_of_links_completed = file_handling.read_file("film_completed.txt")
+        list_of_film_data.clear()
+
         set_of_links_to_be_completed = {link for link in links_to_be_completed if link not in list_of_links_completed}
 
         t1 = perf_counter()
