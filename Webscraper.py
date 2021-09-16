@@ -7,15 +7,12 @@ import file_handling
 list_of_film_data = []
 
 
-def setup():
-    with open("film_completed.txt", "r") as films_done:
-        list_of_links_completed = films_done.read().splitlines()
-    with open("film_incompleted.txt", "r") as films_not_done:
-        list_of_links_to_be_completed = films_not_done.read().splitlines()
-    return list_of_links_to_be_completed, list_of_links_completed
+def read_file(file_name):
+    with open(file_name, "r") as text_file:
+        return text_file.read().splitlines()
 
 
-@profile
+# @profile
 def get_data(parse):
     parse.get_genre()
     parse.get_title_and_date()
@@ -36,7 +33,8 @@ def fetch(link):
 def main():
     while 1:
         list_of_film_data.clear()
-        links_to_be_completed, list_of_links_completed = setup()
+        list_of_links_completed = read_file("film_completed.txt")
+        links_to_be_completed = read_file("film_incompleted.txt")
         set_of_links_to_be_completed = {link for link in links_to_be_completed if link not in list_of_links_completed}
 
         t1 = perf_counter()
@@ -47,7 +45,8 @@ def main():
         file_handling.write_film_data(list_of_film_data)
 
         list_of_links_to_write = [rel_film for film in list_of_film_data for rel_film in film.links_to_related_films]
-        file_handling.update_text_files(list_of_links_to_write, set_of_links_to_be_completed)
+        file_handling.update_text_file("film_completed.txt", set_of_links_to_be_completed, "a")
+        file_handling.update_text_file("film_incompleted.txt", list_of_links_to_write, "w")
         print("Iteration complete")
 
 

@@ -18,11 +18,7 @@ def write_film_data(list_of_film_data):
                  'writers': film_data.writers, 'cast_names': film_data.cast, 'related films': film_data.related_films})
 
 
-def update_text_files(related_links, set_of_links_to_be_completed):
-    with open("film_completed.txt", "a") as films_done:
-        for link in set_of_links_to_be_completed:
-            films_done.write(link + "\n")
-
-    with open("film_incompleted.txt", "w") as films_not_done:
-        for related_link in related_links:
-            films_not_done.write(related_link + "\n")
+def update_text_file(file_name, array_to_iterate_over, file_mode):
+    with open(file_name, file_mode) as text_file:
+        for link in array_to_iterate_over:
+            text_file.write(link + "\n")
