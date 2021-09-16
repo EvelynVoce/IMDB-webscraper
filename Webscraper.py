@@ -1,8 +1,8 @@
-import HTML_parsing
-import time
+from time import perf_counter
 from concurrent.futures import ThreadPoolExecutor
+from profiler import profile
+import HTML_parsing
 import file_handling
-import profiler
 
 list_of_film_data = []
 
@@ -15,7 +15,7 @@ def setup():
     return list_of_links_to_be_completed, list_of_links_completed
 
 
-@profiler.profile
+@profile
 def get_data(parse):
     parse.get_genre()
     parse.get_title_and_date()
@@ -37,16 +37,17 @@ def main():
     while 1:
         list_of_film_data.clear()
         links_to_be_completed, list_of_links_completed = setup()
-        links_to_be_completed[:] = {x for x in links_to_be_completed if x not in list_of_links_completed}
-        set_of_links_to_be_completed = set(links_to_be_completed)  # Already a set now
+        set_of_links_to_be_completed = {link for link in links_to_be_completed if link not in list_of_links_completed}
 
-        t1 = time.perf_counter()
+        t1 = perf_counter()
         with ThreadPoolExecutor(10) as p:
             p.map(fetch, set_of_links_to_be_completed)
-        print(time.perf_counter() - t1, "\n\n")
+        print(perf_counter() - t1, "\n\n")
 
         file_handling.write_film_data(list_of_film_data)
-        file_handling.update_text_files(list_of_film_data, set_of_links_to_be_completed)
+
+        list_of_links_to_write = [rel_film for film in list_of_film_data for rel_film in film.links_to_related_films]
+        file_handling.update_text_files(list_of_links_to_write, set_of_links_to_be_completed)
         print("Iteration complete")
 
 

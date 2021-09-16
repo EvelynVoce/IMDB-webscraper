@@ -1,15 +1,14 @@
 import requests
 from bs4 import BeautifulSoup as Soup
 
-session = requests.Session()
-
 
 class HtmlParsing:
+    session = requests.Session()
 
     def __init__(self, my_url):
         self.my_url = my_url
         page_html = self.request_html()
-        self.page_soup = self.set_page_soup(page_html)
+        self.page_soup = Soup(page_html, "lxml")
         self.met_requirements = self.has_met_requirements()
 
         self.tv_series = False
@@ -26,18 +25,14 @@ class HtmlParsing:
     @staticmethod
     def list_to_string(input_list):
         converted_string = str(input_list)
-        for ch in [('[', ''), (']', ''), ("'", ''), ('"', ''), (',', ';'), ('{', ''), ('}', '')]:
+        for ch in [('[', ''), (']', ''), ('{', ''), ('}', ''), ("'", ''), ('"', ''), (',', ';')]:
             if ch[0] in converted_string:
                 converted_string = converted_string.replace(ch[0], ch[1])
         return converted_string
 
     def request_html(self):
-        page_html = session.get(self.my_url, stream=True).text
+        page_html = self.session.get(self.my_url, stream=True).text
         return page_html
-
-    @staticmethod
-    def set_page_soup(page_html):
-        return Soup(page_html, "lxml")
 
     def has_met_requirements(self):
         amount_of_user_reviews_span = self.page_soup.find("span", {"class": "score"}).text
