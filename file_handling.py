@@ -2,6 +2,11 @@ import csv
 import os
 
 
+def read_file(file_name):
+    with open(file_name, "r") as text_file:
+        return text_file.read().splitlines()
+
+
 def write_film_data(list_of_film_data):
     fieldnames = ['title', 'release date', 'rating', 'genres', 'directors', 'writers', 'cast_names', 'related films']
     file_exists = os.path.isfile('films_data.csv')

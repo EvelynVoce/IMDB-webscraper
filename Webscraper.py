@@ -7,11 +7,6 @@ import file_handling
 list_of_film_data = []
 
 
-def read_file(file_name):
-    with open(file_name, "r") as text_file:
-        return text_file.read().splitlines()
-
-
 # @profile
 def get_data(parse):
     parse.get_genre()
@@ -33,8 +28,8 @@ def fetch(link):
 def main():
     while 1:
         list_of_film_data.clear()
-        list_of_links_completed = read_file("film_completed.txt")
-        links_to_be_completed = read_file("film_incompleted.txt")
+        list_of_links_completed = file_handling.read_file("film_completed.txt")
+        links_to_be_completed = file_handling.read_file("film_incompleted.txt")
         set_of_links_to_be_completed = {link for link in links_to_be_completed if link not in list_of_links_completed}
 
         t1 = perf_counter()
