@@ -2,6 +2,7 @@ import HTML_parsing
 import time
 from concurrent.futures import ThreadPoolExecutor
 import file_handling
+import profiler
 
 list_of_film_data = []
 
@@ -14,6 +15,7 @@ def setup():
     return list_of_links_to_be_completed, list_of_links_completed
 
 
+@profiler.profile
 def get_data(parse):
     parse.get_genre()
     parse.get_title_and_date()

@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup as Soup
-import profiler
 
 session = requests.Session()
 
@@ -27,7 +26,7 @@ class HtmlParsing:
     @staticmethod
     def list_to_string(input_list):
         converted_string = str(input_list)
-        for ch in [('[', ''), (']', ''), ("'", ''), ('"', ''), (',', ';')]:
+        for ch in [('[', ''), (']', ''), ("'", ''), ('"', ''), (',', ';'), ('{', ''), ('}', '')]:
             if ch[0] in converted_string:
                 converted_string = converted_string.replace(ch[0], ch[1])
         return converted_string
@@ -78,6 +77,7 @@ class HtmlParsing:
 
         tv_tag = self.page_soup.find("li", text="TV Series")
         tv_mini_tag = self.page_soup.find("li", text="TV Mini Series")
+
         if tv_tag or tv_mini_tag:
             self.tv_series = True
             genres_list.append("TV Series")
@@ -101,8 +101,7 @@ class HtmlParsing:
         cast = [actor.text for actor in cast_name_tags]
         self.cast = self.list_to_string(cast)
 
-    def get_related_films(self):
-        # Find related films and find new films to check
+    def get_related_films(self):  # Find related films
         liked_films_all_data = self.page_soup.findAll("span", {"data-testid": "title"})
         list_of_related_films = [film.text for film in liked_films_all_data]
         self.related_films = self.list_to_string(list_of_related_films)
@@ -113,8 +112,7 @@ class HtmlParsing:
                                                                     "-width ipc-poster-card__poster ipc-sub-grid-item"
                                                                     " ipc-sub-grid-item--span-2"})
         for div in related_films_div:
-            related_film_a_tags = div.findAll("a", {"class": "ipc-lockup-overlay ipc-focusable"})
-            for link in related_film_a_tags:
-                important_link, _ = link['href'].split("?")
-                new_link = root_link + important_link
-                self.links_to_related_films.append(new_link)
+            link = div.find("a", {"class": "ipc-lockup-overlay ipc-focusable"})
+            important_link, _ = link['href'].split("?")
+            new_link = root_link + important_link
+            self.links_to_related_films.append(new_link)
