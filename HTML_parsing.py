@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup as Soup
 
 
 class HtmlParsing:
+
     session = Session()
 
     def __init__(self, my_url):
@@ -84,7 +85,6 @@ class HtmlParsing:
         for index, div in enumerate(credit_divs[:2]):
             credit_div_a = div.findAll("a")
             temporary_set = {name.text for name in credit_div_a if "more credit" not in name.text}
-
             if index == 0:
                 self.directors = self.list_to_string(temporary_set)
             elif index == 1:
