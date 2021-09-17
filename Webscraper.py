@@ -5,6 +5,8 @@ import HTML_parsing
 import file_handling
 
 list_of_film_data = []
+links_to_scrape_file = "film_incompleted.txt"
+links_scraped = "film_completed.txt"
 
 
 def get_data(parse):
@@ -26,10 +28,10 @@ def fetch(link):
 
 
 def main():
-    links_to_be_completed = file_handling.read_file("film_incompleted.txt")
+    links_to_be_completed = file_handling.read_file(links_to_scrape_file)
     if len(links_to_be_completed) == 0:
         exit()
-    list_of_links_completed = file_handling.read_file("film_completed.txt")
+    list_of_links_completed = file_handling.read_file(links_scraped)
 
     set_of_links_to_be_completed = {link for link in links_to_be_completed if link not in list_of_links_completed}
 
@@ -40,13 +42,13 @@ def main():
 
     file_handling.write_film_data(list_of_film_data)
     links_to_write = {rel_film for film in list_of_film_data for rel_film in film.links_to_related_films}
+    file_handling.update_text_file(links_scraped, set_of_links_to_be_completed, "a")
+    file_handling.update_text_file(links_to_scrape_file, links_to_write, "w")
     links_to_write.clear()
 
-    file_handling.update_text_file("film_completed.txt", set_of_links_to_be_completed, "a")
-    file_handling.update_text_file("film_incompleted.txt", links_to_write, "w")
     print("Iteration complete")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     while True:
         main()

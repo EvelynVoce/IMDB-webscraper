@@ -1,6 +1,8 @@
 from csv import DictWriter
 from os import path
 
+films_csv_file = "films_data.csv"
+
 
 def read_file(file_name):
     with open(file_name, "r") as text_file:
@@ -8,19 +10,19 @@ def read_file(file_name):
 
 
 def write_film_data(list_of_film_data):
-    fieldnames = ['title', 'release date', 'rating', 'genres', 'directors', 'writers', 'cast_names', 'related films']
-    file_exists = path.isfile('films_data.csv')
+    fieldnames = ["title", "release date", "rating", "genres", "directors", "writers", "cast_names", "related films"]
+    file_exists = path.isfile("films_data.csv")
 
-    with open('films_data.csv', 'a', newline='') as file:
+    with open(films_csv_file, "a", newline="") as file:
         writer = DictWriter(file, fieldnames=fieldnames)
         if not file_exists:
             writer.writeheader()
 
         for film_data in list_of_film_data:
             writer.writerow(
-                {'title': film_data.title, 'release date': film_data.date, 'rating': film_data.rating,
-                 'genres': film_data.genres, 'directors': film_data.directors,
-                 'writers': film_data.writers, 'cast_names': film_data.cast, 'related films': film_data.related_films})
+                {"title": film_data.title, "release date": film_data.date, "rating": film_data.rating,
+                 "genres": film_data.genres, "directors": film_data.directors,
+                 "writers": film_data.writers, "cast_names": film_data.cast, "related films": film_data.related_films})
 
 
 def update_text_file(file_name, array_to_iterate_over, file_mode):

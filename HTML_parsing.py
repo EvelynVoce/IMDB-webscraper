@@ -27,7 +27,7 @@ class HtmlParsing:
     @staticmethod
     def list_to_string(input_list):
         converted_string = str(input_list)
-        for ch in [('[', ''), (']', ''), ('{', ''), ('}', ''), ("'", ''), ('"', ''), (',', ';')]:
+        for ch in [("[", ""), ("]", ""), ("{", ""), ("}", ""), (""", ""), (""", ""), (",", ";")]:
             if ch[0] in converted_string:
                 converted_string = converted_string.replace(ch[0], ch[1])
         return converted_string
@@ -76,7 +76,7 @@ class HtmlParsing:
 
         if tv_tag or tv_mini_tag:
             self.tv_series = True
-            genres_set.append("TV Series")
+            genres_set.add("TV Series")
 
         self.genres = self.list_to_string(genres_set)
 
@@ -107,6 +107,6 @@ class HtmlParsing:
                                                                     " ipc-sub-grid-item--span-2"})
         for div in related_films_div:
             link = div.find("a", {"class": "ipc-lockup-overlay ipc-focusable"})
-            important_link, _ = link['href'].split("?")
+            important_link, _ = link["href"].split("?")
             new_link = root_link + important_link
             self.links_to_related_films.append(new_link)
