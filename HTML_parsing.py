@@ -69,16 +69,16 @@ class HtmlParsing:
     def get_genre(self):
         genre_div = self.page_soup.find("div", {"class": "ipc-chip-list GenresAndPlot__GenresChipList-cum89p-4 gtBDBL"})
         genres_a_tags = genre_div.findAll("a")
-        genres_list = [genre.text for genre in genres_a_tags]
+        genres_set = {genre.text for genre in genres_a_tags}
 
         tv_tag = self.page_soup.find("li", text="TV Series")
         tv_mini_tag = self.page_soup.find("li", text="TV Mini Series")
 
         if tv_tag or tv_mini_tag:
             self.tv_series = True
-            genres_list.append("TV Series")
+            genres_set.append("TV Series")
 
-        self.genres = self.list_to_string(genres_list)
+        self.genres = self.list_to_string(genres_set)
 
     def get_writers_and_directors(self):
         credit_divs = self.page_soup.findAll("div", {"class": "ipc-metadata-list-item__content-container"})
@@ -92,8 +92,8 @@ class HtmlParsing:
 
     def get_cast(self):
         cast_name_tags = self.page_soup.findAll("a", {"class": "StyledComponents__ActorName-y9ygcu-1 eyqFnv"})
-        cast = [actor.text for actor in cast_name_tags]
-        self.cast = self.list_to_string(cast)
+        cast_set = {actor.text for actor in cast_name_tags}
+        self.cast = self.list_to_string(cast_set)
 
     def get_related_films(self):  # Find related films
         liked_films_all_data = self.page_soup.findAll("span", {"data-testid": "title"})

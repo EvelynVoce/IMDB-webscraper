@@ -39,11 +39,11 @@ def main():
     print(perf_counter() - t1, "\n\n")
 
     file_handling.write_film_data(list_of_film_data)
-    list_of_links_to_write = [rel_film for film in list_of_film_data for rel_film in film.links_to_related_films]
-    list_of_film_data.clear()
+    links_to_write = {rel_film for film in list_of_film_data for rel_film in film.links_to_related_films}
+    links_to_write.clear()
 
     file_handling.update_text_file("film_completed.txt", set_of_links_to_be_completed, "a")
-    file_handling.update_text_file("film_incompleted.txt", list_of_links_to_write, "w")
+    file_handling.update_text_file("film_incompleted.txt", links_to_write, "w")
     print("Iteration complete")
 
 
