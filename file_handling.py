@@ -20,7 +20,7 @@ def initiate_files(file_name):
 
 
 def read_file(file_name):
-    with open(file_name, "r+") as text_file:
+    with open(file_name, "r") as text_file:
         return text_file.read().splitlines()
 
 
