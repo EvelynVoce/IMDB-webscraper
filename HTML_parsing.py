@@ -1,14 +1,11 @@
-from requests import Session
 from bs4 import BeautifulSoup as Soup
 
 
 class HtmlParsing:
 
-    session = Session()
-
-    def __init__(self, my_url):
+    def __init__(self, my_url, session):
         self.my_url = my_url
-
+        self.session = session
         page_html = self.request_html()
         self.page_soup = Soup(page_html, "lxml")
         self.met_requirements = self.has_met_requirements()
@@ -25,9 +22,9 @@ class HtmlParsing:
         self.links_to_related_films = []
 
     @staticmethod
-    def list_to_string(input_list):
+    def set_to_string(input_list):
         converted_string = str(input_list)
-        for ch in [("[", ""), ("]", ""), ("{", ""), ("}", ""), (""", ""), (""", ""), (",", ";")]:
+        for ch in [("{", ""), ("}", ""), ('"', ""), ("'", ""), (",", ";")]:
             if ch[0] in converted_string:
                 converted_string = converted_string.replace(ch[0], ch[1])
         return converted_string
@@ -78,7 +75,7 @@ class HtmlParsing:
             self.tv_series = True
             genres_set.add("TV Series")
 
-        self.genres = self.list_to_string(genres_set)
+        self.genres = self.set_to_string(genres_set)
 
     def get_writers_and_directors(self):
         credit_divs = self.page_soup.findAll("div", {"class": "ipc-metadata-list-item__content-container"})
@@ -86,19 +83,19 @@ class HtmlParsing:
             credit_div_a = div.findAll("a")
             temporary_set = {name.text for name in credit_div_a if "more credit" not in name.text}
             if index == 0:
-                self.directors = self.list_to_string(temporary_set)
+                self.directors = self.set_to_string(temporary_set)
             elif index == 1:
-                self.writers = self.list_to_string(temporary_set)
+                self.writers = self.set_to_string(temporary_set)
 
     def get_cast(self):
         cast_name_tags = self.page_soup.findAll("a", {"class": "StyledComponents__ActorName-y9ygcu-1 eyqFnv"})
         cast_set = {actor.text for actor in cast_name_tags}
-        self.cast = self.list_to_string(cast_set)
+        self.cast = self.set_to_string(cast_set)
 
     def get_related_films(self):  # Find related films
         liked_films_all_data = self.page_soup.findAll("span", {"data-testid": "title"})
-        list_of_related_films = [film.text for film in liked_films_all_data]
-        self.related_films = self.list_to_string(list_of_related_films)
+        set_of_related_films = {film.text for film in liked_films_all_data}
+        self.related_films = self.set_to_string(set_of_related_films)
 
     def get_related_urls(self):
         root_link = "https://www.imdb.com"
