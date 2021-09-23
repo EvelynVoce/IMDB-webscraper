@@ -46,6 +46,9 @@ def write_film_data(list_of_film_data):
 
 
 def update_text_file(file_name, array_to_iterate_over, file_mode):
+    completed_films = read_file("films_completed.txt")
+
     with open(file_name, file_mode) as text_file:
         for link in array_to_iterate_over:
-            text_file.write(link + "\n")
+            if link not in completed_films:
+                text_file.write(link + "\n")

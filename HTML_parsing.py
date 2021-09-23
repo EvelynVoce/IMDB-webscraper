@@ -5,21 +5,21 @@ class HtmlParsing:
 
     def __init__(self, my_url, session):
         self.my_url = my_url
-        self.session = session
-        page_html = self.request_html()
+        page_html = session.get(self.my_url, stream=True).text
         self.page_soup = Soup(page_html, "lxml")
         self.met_requirements = self.has_met_requirements()
-
-        self.tv_series = False
-        self.title = ""
-        self.date = ""
-        self.rating = 0
-        self.genres = ""
-        self.directors = ""
-        self.writers = ""
-        self.cast = ""
-        self.related_films = ""
-        self.links_to_related_films = []
+        if self.met_requirements:
+            self.title = self.set_title()
+            self.date = self.set_date()
+            self.rating = self.get_rating()
+            self.genres = self.get_genre()
+            self.directors = ""
+            self.writers = ""
+            self.get_writers_and_directors()
+            self.cast = self.get_cast()
+            self.related_films = self.get_related_films()
+            self.links_to_related_films = []
+            self.get_related_urls()
 
     @staticmethod
     def set_to_string(input_list):
@@ -28,9 +28,6 @@ class HtmlParsing:
             if ch[0] in converted_string:
                 converted_string = converted_string.replace(ch[0], ch[1])
         return converted_string
-
-    def request_html(self):
-        return self.session.get(self.my_url, stream=True).text
 
     def has_met_requirements(self):
         amount_of_user_reviews_span = self.page_soup.find("span", {"class": "score"}).text
@@ -46,22 +43,19 @@ class HtmlParsing:
 
     def set_title(self):
         title_div_tag = self.page_soup.find("div", {"class": "TitleBlock__TitleContainer-sc-1nlhx7j-1 jxsVNt"})
-        self.title = title_div_tag.find("h1").text.strip()
+        return title_div_tag.find("h1").text.strip()
 
     def set_date(self):
         date_div = self.page_soup.find("div", {"class": "TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-2 hWHMKr"})
-        self.date = date_div.find("a").text.strip()
-
-    def get_title_and_date(self):
-        self.set_title()
-        if not self.tv_series:
-            self.set_date()
-        else:
-            self.date = 0
+        found_date = date_div.find("a").text.strip()
+        if "–" in found_date:
+            updated_date, _ = found_date.split("–")
+            return updated_date
+        return found_date
 
     def get_rating(self):
         required_class_string = "AggregateRatingButton__RatingScore-sc-1ll29m0-1 iTLWoV"
-        self.rating = self.page_soup.find("span", {"class": required_class_string}).text
+        return self.page_soup.find("span", {"class": required_class_string}).text
 
     def get_genre(self):
         genre_div = self.page_soup.find("div", {"class": "ipc-chip-list GenresAndPlot__GenresChipList-cum89p-4 gtBDBL"})
@@ -72,10 +66,9 @@ class HtmlParsing:
         tv_mini_tag = self.page_soup.find("li", text="TV Mini Series")
 
         if tv_tag or tv_mini_tag:
-            self.tv_series = True
             genres_set.add("TV Series")
 
-        self.genres = self.set_to_string(genres_set)
+        return self.set_to_string(genres_set)
 
     def get_writers_and_directors(self):
         credit_divs = self.page_soup.findAll("div", {"class": "ipc-metadata-list-item__content-container"})
@@ -90,12 +83,12 @@ class HtmlParsing:
     def get_cast(self):
         cast_name_tags = self.page_soup.findAll("a", {"class": "StyledComponents__ActorName-y9ygcu-1 eyqFnv"})
         cast_set = {actor.text for actor in cast_name_tags}
-        self.cast = self.set_to_string(cast_set)
+        return self.set_to_string(cast_set)
 
     def get_related_films(self):  # Find related films
         liked_films_all_data = self.page_soup.findAll("span", {"data-testid": "title"})
         set_of_related_films = {film.text for film in liked_films_all_data}
-        self.related_films = self.set_to_string(set_of_related_films)
+        return self.set_to_string(set_of_related_films)
 
     def get_related_urls(self):
         root_link = "https://www.imdb.com"
