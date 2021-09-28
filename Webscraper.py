@@ -1,7 +1,7 @@
 from requests import Session
 from time import perf_counter
 from concurrent.futures import ThreadPoolExecutor
-import HTML_parsing
+from HTML_parsing import HtmlParsing
 import file_handling
 
 list_of_film_data = []
@@ -9,15 +9,16 @@ LINKS_SCRAPED_FILE = "films_completed.txt"
 
 
 def fetch(link, session):
-    parse = HTML_parsing.HtmlParsing(link, session)
+    parse = HtmlParsing(link, session)
     if parse.met_requirements:
         list_of_film_data.append(parse)
 
 
 def main():
     links_to_be_completed = file_handling.retrieve_file(file_handling.LINKS_TO_SCRAPE_FILE)
-    if len(links_to_be_completed) == 0:
+    if not links_to_be_completed:
         exit()
+
     list_of_links_completed = file_handling.retrieve_file(LINKS_SCRAPED_FILE)
     set_of_links_to_be_completed = {link for link in links_to_be_completed if link not in list_of_links_completed}
 

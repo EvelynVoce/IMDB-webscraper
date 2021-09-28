@@ -16,7 +16,6 @@ def initiate_files(file_name):
     endgame_link = "https://www.imdb.com/title/tt4154796/"
     with open(file_name, "w") as text_file:
         text_file.write(endgame_link) if file_name == LINKS_TO_SCRAPE_FILE else text_file.write("")
-    read_file(file_name)
 
 
 def read_file(file_name):
@@ -35,14 +34,10 @@ def write_film_data(list_of_film_data):
 
         for film_data in list_of_film_data:
             writer.writerow(
-                {"title": film_data.title,
-                 "release date": film_data.date,
-                 "rating": film_data.rating,
-                 "genres": film_data.genres,
-                 "directors": film_data.directors,
-                 "writers": film_data.writers,
-                 "cast_names": film_data.cast,
-                 "related films": film_data.related_films})
+                {"title": film_data.title,  "release date": film_data.date,
+                 "rating": film_data.rating,    "genres": film_data.genres,
+                 "directors": film_data.directors,  "writers": film_data.writers,
+                 "cast_names": film_data.cast,  "related films": film_data.related_films})
 
 
 def update_text_file(file_name, array_to_iterate_over, file_mode):

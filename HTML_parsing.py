@@ -4,8 +4,7 @@ from bs4 import BeautifulSoup as Soup
 class HtmlParsing:
 
     def __init__(self, my_url, session):
-        self.my_url = my_url
-        page_html = session.get(self.my_url, stream=True).text
+        page_html = session.get(my_url, stream=True).text
         self.page_soup = Soup(page_html, "lxml")
         self.met_requirements = self.has_met_requirements()
         if self.met_requirements:
@@ -18,27 +17,23 @@ class HtmlParsing:
             self.get_writers_and_directors()
             self.cast = self.get_cast()
             self.related_films = self.get_related_films()
-            self.links_to_related_films = []
-            self.get_related_urls()
+            self.links_to_related_films = self.get_related_urls()
 
     @staticmethod
     def set_to_string(input_list):
         converted_string = str(input_list)
         for ch in [("{", ""), ("}", ""), ('"', ""), ("'", ""), (",", ";")]:
-            if ch[0] in converted_string:
-                converted_string = converted_string.replace(ch[0], ch[1])
+            converted_string = converted_string.replace(ch[0], ch[1])
         return converted_string
 
     def has_met_requirements(self):
         amount_of_user_reviews_span = self.page_soup.find("span", {"class": "score"}).text
-
         if amount_of_user_reviews_span[-1] == "K":
-            thousands_of_reviews = amount_of_user_reviews_span.strip("K")
-            amount_of_user_reviews = int(float(thousands_of_reviews) * 1000)
+            amount_of_user_reviews = float(amount_of_user_reviews_span[:-1]) * 1000
         else:
             amount_of_user_reviews = int(amount_of_user_reviews_span)
 
-        minimum_amount_user_reviews = 150
+        minimum_amount_user_reviews = 50  # 150
         return amount_of_user_reviews > minimum_amount_user_reviews
 
     def set_title(self):
@@ -48,14 +43,10 @@ class HtmlParsing:
     def set_date(self):
         date_div = self.page_soup.find("div", {"class": "TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-2 hWHMKr"})
         found_date = date_div.find("a").text.strip()
-        if "–" in found_date:
-            updated_date, _ = found_date.split("–")
-            return updated_date
-        return found_date
+        return found_date.split("–")[0]
 
     def get_rating(self):
-        required_class_string = "AggregateRatingButton__RatingScore-sc-1ll29m0-1 iTLWoV"
-        return self.page_soup.find("span", {"class": required_class_string}).text
+        return self.page_soup.find("span", {"class": "AggregateRatingButton__RatingScore-sc-1ll29m0-1 iTLWoV"}).text
 
     def get_genre(self):
         genre_div = self.page_soup.find("div", {"class": "ipc-chip-list GenresAndPlot__GenresChipList-cum89p-4 gtBDBL"})
@@ -77,7 +68,7 @@ class HtmlParsing:
             temporary_set = {name.text for name in credit_div_a if "more credit" not in name.text}
             if index == 0:
                 self.directors = self.set_to_string(temporary_set)
-            elif index == 1:
+            else:
                 self.writers = self.set_to_string(temporary_set)
 
     def get_cast(self):
@@ -95,8 +86,4 @@ class HtmlParsing:
         related_films_div = self.page_soup.findAll("div", {"class": "ipc-poster ipc-poster--base ipc-poster--dynamic"
                                                                     "-width ipc-poster-card__poster ipc-sub-grid-item"
                                                                     " ipc-sub-grid-item--span-2"})
-        for div in related_films_div:
-            link = div.find("a", {"class": "ipc-lockup-overlay ipc-focusable"})
-            important_link, _ = link["href"].split("?")
-            new_link = root_link + important_link
-            self.links_to_related_films.append(new_link)
+        return [root_link + div.find("a")["href"].split("?")[0] for div in related_films_div]
