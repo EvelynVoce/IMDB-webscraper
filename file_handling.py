@@ -34,15 +34,13 @@ def write_film_data(list_of_film_data):
 
         for film_data in list_of_film_data:
             writer.writerow(
-                {"title": film_data.title,  "release date": film_data.date,
-                 "rating": film_data.rating,    "genres": film_data.genres,
-                 "directors": film_data.directors,  "writers": film_data.writers,
+                {"title": film_data.title,  "release date": film_data.date, "rating": film_data.rating,
+                 "genres": film_data.genres, "directors": film_data.directors,  "writers": film_data.writers,
                  "cast_names": film_data.cast,  "related films": film_data.related_films})
 
 
 def update_text_file(file_name, array_to_iterate_over, file_mode):
     completed_films = read_file("films_completed.txt")
-
     with open(file_name, file_mode) as text_file:
         for link in array_to_iterate_over:
             if link not in completed_films:

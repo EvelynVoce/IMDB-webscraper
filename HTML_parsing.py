@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup as Soup
 
 
 class HtmlParsing:
+    __slots__ = ['page_soup', 'met_requirements', 'title', 'date', 'rating', 'genres', 'directors',
+                 'writers', 'cast', 'related_films', 'links_to_related_films']
 
     def __init__(self, my_url, session):
         page_html = session.get(my_url, stream=True).text
@@ -22,7 +24,7 @@ class HtmlParsing:
     @staticmethod
     def set_to_string(input_list):
         converted_string = str(input_list)
-        for ch in [("{", ""), ("}", ""), ('"', ""), ("'", ""), (",", ";")]:
+        for ch in [("[", ""), ("]", ""), ("{", ""), ("}", ""), ('"', ""), ("'", ""), (",", ";")]:
             converted_string = converted_string.replace(ch[0], ch[1])
         return converted_string
 
@@ -33,7 +35,7 @@ class HtmlParsing:
         else:
             amount_of_user_reviews = int(amount_of_user_reviews_span)
 
-        minimum_amount_user_reviews = 50  # 150
+        minimum_amount_user_reviews = 250
         return amount_of_user_reviews > minimum_amount_user_reviews
 
     def set_title(self):
@@ -55,7 +57,6 @@ class HtmlParsing:
 
         tv_tag = self.page_soup.find("li", text="TV Series")
         tv_mini_tag = self.page_soup.find("li", text="TV Mini Series")
-
         if tv_tag or tv_mini_tag:
             genres_set.add("TV Series")
 
@@ -65,7 +66,7 @@ class HtmlParsing:
         credit_divs = self.page_soup.findAll("div", {"class": "ipc-metadata-list-item__content-container"})
         for index, div in enumerate(credit_divs[:2]):
             credit_div_a = div.findAll("a")
-            temporary_set = {name.text for name in credit_div_a if "more credit" not in name.text}
+            temporary_set = {name.text for name in credit_div_a}
             if index == 0:
                 self.directors = self.set_to_string(temporary_set)
             else:
