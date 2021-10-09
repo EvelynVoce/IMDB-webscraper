@@ -54,6 +54,22 @@ def test_genre(expected_answer, object_passed):
     assert expected_answer == actual_answer
 
 
+@pytest.mark.parametrize("expected_answer, object_passed",
+                         [({'Jeremy Renner', 'Karen Gillan', 'Don Cheadle', 'Tessa Thompson', 'Scarlett Johansson',
+                            'Evangeline Lilly', 'Zoe Saldana', 'Chris Evans', 'Brie Larson', 'Mark Ruffalo',
+                            'Paul Rudd', 'Chadwick Boseman', 'Robert Downey Jr.', 'Tom Holland', 'Benedict Cumberbatch',
+                            'Chris Hemsworth', 'Rene Russo', 'Elizabeth Olsen'}, parsed_endgame),
+
+                          ({"Damon D'Amico Jr.", 'Kris Sidberry', 'Annalise Basso', 'Jaz Sinclair',
+                            'Joey King', 'Angela Hope Smith', 'Alex Fitzalan', 'Kevin Chapman', 'Jessica Blank',
+                            'Javier Botet', 'Miguel Nascimento', 'Taylor Richardson', 'Eddie Frateschi', 'Marc Carver',
+                            'Michael Reilly Burke', 'Julia Goldani Telles', 'Oscar Wahlberg', 'Danny Beaton'}
+                           , parsed_slender_man_film)])
+def test_cast(expected_answer, object_passed):
+    actual_answer = object_passed.get_cast()
+    assert expected_answer == actual_answer
+
+
 # import unittest
 # from HTML_parsing import HtmlParsing
 # from requests import Session

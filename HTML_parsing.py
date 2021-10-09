@@ -2,8 +2,8 @@ from bs4 import BeautifulSoup as Soup
 
 
 class HtmlParsing:
-#    __slots__ = ['page_soup', 'met_requirements', 'title', 'date', 'rating', 'genres', 'directors',
-#                 'writers', 'cast', 'related_films', 'links_to_related_films']
+    __slots__ = ['page_soup', 'met_requirements', 'title', 'date', 'rating', 'genres', 'directors',
+                 'writers', 'cast', 'related_films', 'links_to_related_films']
 
     def __init__(self, my_url, session):
         page_html = session.get(my_url, stream=True).text
@@ -17,8 +17,8 @@ class HtmlParsing:
             self.directors = ""
             self.writers = ""
             self.get_writers_and_directors()
-            self.cast = self.get_cast()
-            self.related_films = self.get_related_films()
+            self.cast = self.set_to_string(self.get_cast())
+            self.related_films = self.set_to_string(self.get_related_films())
             self.links_to_related_films = self.get_related_urls()
 
     @staticmethod
@@ -75,12 +75,12 @@ class HtmlParsing:
     def get_cast(self):
         cast_name_tags = self.page_soup.findAll("a", {"class": "StyledComponents__ActorName-y9ygcu-1 eyqFnv"})
         cast_set = {actor.text for actor in cast_name_tags}
-        return self.set_to_string(cast_set)
+        return cast_set
 
     def get_related_films(self):  # Find related films
         liked_films_all_data = self.page_soup.findAll("span", {"data-testid": "title"})
         set_of_related_films = {film.text for film in liked_films_all_data}
-        return self.set_to_string(set_of_related_films)
+        return set_of_related_films
 
     def get_related_urls(self):
         root_link = "https://www.imdb.com"
