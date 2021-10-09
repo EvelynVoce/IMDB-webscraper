@@ -34,11 +34,24 @@ def test_title(expected_answer, answer):
     assert expected_answer == answer
 
 
+@pytest.mark.parametrize("expected_answer, answer",
+                         [("2019", parsed_endgame.date), ("2018", parsed_slender_man_film.date)])
+def test_date(expected_answer, answer):
+    assert expected_answer == answer
 
 
+@pytest.mark.parametrize("expected_answer, answer",
+                         [("8.4", parsed_endgame.rating), ("3.2", parsed_slender_man_film.rating)])
+def test_rating(expected_answer, answer):
+    assert expected_answer == answer
 
 
-
+@pytest.mark.parametrize("expected_answer, object_passed",
+                         [({'Adventure', 'Action', 'Drama'}, parsed_endgame),
+                          ({'Horror', 'Mystery', 'Thriller'}, parsed_slender_man_film)])
+def test_genre(expected_answer, object_passed):
+    actual_answer = object_passed.get_genre()
+    assert expected_answer == actual_answer
 
 
 # import unittest

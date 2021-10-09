@@ -2,8 +2,8 @@ from bs4 import BeautifulSoup as Soup
 
 
 class HtmlParsing:
-    __slots__ = ['page_soup', 'met_requirements', 'title', 'date', 'rating', 'genres', 'directors',
-                 'writers', 'cast', 'related_films', 'links_to_related_films']
+#    __slots__ = ['page_soup', 'met_requirements', 'title', 'date', 'rating', 'genres', 'directors',
+#                 'writers', 'cast', 'related_films', 'links_to_related_films']
 
     def __init__(self, my_url, session):
         page_html = session.get(my_url, stream=True).text
@@ -13,7 +13,7 @@ class HtmlParsing:
             self.title = self.set_title()
             self.date = self.set_date()
             self.rating = self.get_rating()
-            self.genres = self.get_genre()
+            self.genres = self.set_to_string(self.get_genre())
             self.directors = ""
             self.writers = ""
             self.get_writers_and_directors()
@@ -60,7 +60,7 @@ class HtmlParsing:
         if tv_tag or tv_mini_tag:
             genres_set.add("TV Series")
 
-        return self.set_to_string(genres_set)
+        return genres_set
 
     def get_writers_and_directors(self):
         credit_divs = self.page_soup.findAll("div", {"class": "ipc-metadata-list-item__content-container"})
