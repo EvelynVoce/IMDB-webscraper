@@ -20,9 +20,9 @@ def main():
         list_of_links_completed = file_handling.retrieve_file(links_scraped_file)
         set_of_links_to_be_completed = {link for link in links_to_be_completed if link not in list_of_links_completed}
         t1 = perf_counter()
-        with ThreadPoolExecutor(max_workers=30) as p:
-            with Session() as session:
-                p.map(fetch, set_of_links_to_be_completed, [session] * len(set_of_links_to_be_completed))
+
+        with ThreadPoolExecutor(max_workers=30) as p, Session() as session:
+            p.map(fetch, set_of_links_to_be_completed, [session] * len(set_of_links_to_be_completed))
         print("Iteration complete", perf_counter() - t1)
 
         file_handling.write_film_data(list_of_film_data)
