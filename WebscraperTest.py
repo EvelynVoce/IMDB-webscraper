@@ -4,13 +4,13 @@ from requests import Session
 
 session = Session()
 
-endgame_link = "https://www.imdb.com/title/tt4154796/"
+endgame_link: str = "https://www.imdb.com/title/tt4154796/"
 parsed_endgame = HtmlParsing(endgame_link, session)
 
-slender_man_link = "https://www.imdb.com/title/tt5690360/"
+slender_man_link: str = "https://www.imdb.com/title/tt5690360/"
 parsed_slender_man_film = HtmlParsing(slender_man_link, session)
 
-russian_link = "https://www.imdb.com/title/tt0386134/"
+russian_link: str = "https://www.imdb.com/title/tt0386134/"
 parsed_russian_film = HtmlParsing(russian_link, session)
 
 
@@ -97,5 +97,5 @@ def test_related_films(expected_answer, object_passed):
                     'https://www.imdb.com/title/tt3317158/', 'https://www.imdb.com/title/tt5726086/'},
                     parsed_slender_man_film)])
 def test_related_films(expected_answer, object_passed):
-    actual_answer = set(object_passed.get_related_urls())
+    actual_answer: set = set(object_passed.get_related_urls())
     assert expected_answer == actual_answer
