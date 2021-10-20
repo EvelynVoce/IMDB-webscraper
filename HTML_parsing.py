@@ -35,7 +35,7 @@ class HtmlParsing:
         else:
             amount_of_user_reviews = int(amount_of_user_reviews_span)
 
-        minimum_amount_user_reviews = 250
+        minimum_amount_user_reviews = 125
         return amount_of_user_reviews > minimum_amount_user_reviews
 
     def set_title(self):
@@ -74,13 +74,11 @@ class HtmlParsing:
 
     def get_cast(self):
         cast_name_tags = self.page_soup.findAll("a", {"class": "StyledComponents__ActorName-y9ygcu-1 eyqFnv"})
-        cast_set = {actor.text for actor in cast_name_tags}
-        return cast_set
+        return {actor.text for actor in cast_name_tags}
 
     def get_related_films(self):  # Find related films
         liked_films_all_data = self.page_soup.findAll("span", {"data-testid": "title"})
-        set_of_related_films = {film.text for film in liked_films_all_data}
-        return set_of_related_films
+        return {film.text for film in liked_films_all_data}
 
     def get_related_urls(self):
         root_link = "https://www.imdb.com"
