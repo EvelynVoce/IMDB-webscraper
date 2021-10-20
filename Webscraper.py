@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 from HTML_parsing import HtmlParsing
 import file_handling
 
-list_of_film_data = []
+list_of_film_data: list = []
 
 
 def fetch(link, session):
@@ -14,11 +14,12 @@ def fetch(link, session):
 
 
 def main():
-    links_scraped_file = "films_completed.txt"
-    links_to_be_completed = file_handling.retrieve_file(file_handling.LINKS_TO_SCRAPE_FILE)
+    links_scraped_file: str = "films_completed.txt"
+    links_to_be_completed: list = file_handling.retrieve_file(file_handling.LINKS_TO_SCRAPE_FILE)
     while links_to_be_completed:
         list_of_links_completed = file_handling.retrieve_file(links_scraped_file)
-        set_of_links_to_be_completed = {link for link in links_to_be_completed if link not in list_of_links_completed}
+        set_of_links_to_be_completed: set = {link for link in links_to_be_completed
+                                             if link not in list_of_links_completed}
         t1 = perf_counter()
 
         with ThreadPoolExecutor(max_workers=30) as p, Session() as session:
