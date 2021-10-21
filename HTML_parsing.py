@@ -22,13 +22,13 @@ class HtmlParsing:
             self.links_to_related_films: list = self.get_related_urls()
 
     @staticmethod
-    def set_to_string(input_list):
+    def set_to_string(input_list) -> str:
         converted_string: str = str(input_list)
         for ch in [("[", ""), ("]", ""), ("{", ""), ("}", ""), ('"', ""), ("'", ""), (",", ";")]:
             converted_string: str = converted_string.replace(ch[0], ch[1])
         return converted_string
 
-    def has_met_requirements(self):
+    def has_met_requirements(self) -> bool:
         amount_of_user_reviews_span: str = self.page_soup.find("span", {"class": "score"}).text
         if amount_of_user_reviews_span[-1] == "K":
             amount_of_user_reviews: float = float(amount_of_user_reviews_span[:-1]) * 1000
@@ -38,19 +38,19 @@ class HtmlParsing:
         minimum_amount_user_reviews: int = 125
         return amount_of_user_reviews > minimum_amount_user_reviews
 
-    def set_title(self):
+    def set_title(self) -> str:
         title_div_tag = self.page_soup.find("div", {"class": "TitleBlock__TitleContainer-sc-1nlhx7j-1 jxsVNt"})
         return title_div_tag.find("h1").text.strip()
 
-    def set_date(self):
+    def set_date(self) -> str:
         date_div = self.page_soup.find("div", {"class": "TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-2 hWHMKr"})
         found_date: str = date_div.find("a").text.strip()
         return found_date.split("–")[0]
 
-    def get_rating(self):
+    def get_rating(self) -> str:
         return self.page_soup.find("span", {"class": "AggregateRatingButton__RatingScore-sc-1ll29m0-1 iTLWoV"}).text
 
-    def get_genre(self):
+    def get_genre(self) -> set:
         genre_div = self.page_soup.find("div", {"class": "ipc-chip-list GenresAndPlot__GenresChipList-cum89p-4 gtBDBL"})
         genres_a_tags = genre_div.findAll("a")
         genres_set: set = {genre.text for genre in genres_a_tags}
@@ -71,15 +71,15 @@ class HtmlParsing:
             else:
                 self.writers = self.set_to_string(temporary_set)
 
-    def get_cast(self):
+    def get_cast(self) -> set:
         cast_name_tags = self.page_soup.findAll("a", {"class": "StyledComponents__ActorName-y9ygcu-1 eyqFnv"})
         return {actor.text for actor in cast_name_tags}
 
-    def get_related_films(self):  # Find related films
+    def get_related_films(self) -> set:  # Find related films
         liked_films_all_data = self.page_soup.findAll("span", {"data-testid": "title"})
         return {film.text for film in liked_films_all_data}
 
-    def get_related_urls(self):
+    def get_related_urls(self) -> list:
         root_link: str = "https://www.imdb.com"
         related_films_div = self.page_soup.findAll("div", {"class": "ipc-poster ipc-poster--base ipc-poster--dynamic"
                                                                     "-width ipc-poster-card__poster ipc-sub-grid-item"

@@ -6,7 +6,7 @@ LINKS_TO_SCRAPE_FILE: str = "films_not_completed.txt"
 
 
 def retrieve_file(file_name: str):
-    links_to_scrape_exists = path.isfile(file_name)
+    links_to_scrape_exists: bool = path.isfile(file_name)
     if not links_to_scrape_exists:
         initiate_files(file_name)
     return read_file(file_name)

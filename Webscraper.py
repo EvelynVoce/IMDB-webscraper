@@ -1,8 +1,8 @@
 from requests import Session
-from time import perf_counter
 from concurrent.futures import ThreadPoolExecutor
 from HTML_parsing import HtmlParsing
 import file_handling
+from time import perf_counter
 
 list_of_film_data: list = []
 
@@ -21,7 +21,7 @@ def main():
         t1 = perf_counter()
         with ThreadPoolExecutor(max_workers=30) as p, Session() as session:
             p.map(fetch, set_of_links_to_be_completed, [session] * len(set_of_links_to_be_completed))
-        print("Iteration complete", perf_counter() - t1)
+        print("Iteration completed in:", perf_counter() - t1)
 
         file_handling.write_film_data(list_of_film_data)
         links_found = {rel_film for film in list_of_film_data for rel_film in film.links_to_related_films}
