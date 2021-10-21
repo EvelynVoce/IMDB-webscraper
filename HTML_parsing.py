@@ -19,7 +19,7 @@ class HtmlParsing:
             self.get_writers_and_directors()
             self.cast: str = self.set_to_string(self.get_cast())
             self.related_films: str = self.set_to_string(self.get_related_films())
-            self.links_to_related_films: list = self.get_related_urls()
+            self.links_to_related_films: list[str] = self.get_related_urls()
 
     @staticmethod
     def set_to_string(input_list) -> str:
@@ -50,36 +50,35 @@ class HtmlParsing:
     def get_rating(self) -> str:
         return self.page_soup.find("span", {"class": "AggregateRatingButton__RatingScore-sc-1ll29m0-1 iTLWoV"}).text
 
-    def get_genre(self) -> set:
+    def get_genre(self) -> set[str]:
         genre_div = self.page_soup.find("div", {"class": "ipc-chip-list GenresAndPlot__GenresChipList-cum89p-4 gtBDBL"})
         genres_a_tags = genre_div.findAll("a")
-        genres_set: set = {genre.text for genre in genres_a_tags}
+        genres: set[str] = {genre.text for genre in genres_a_tags}
 
         tv_tag = self.page_soup.find("li", text="TV Series")
         tv_mini_tag = self.page_soup.find("li", text="TV Mini Series")
         if tv_tag or tv_mini_tag:
-            genres_set.add("TV Series")
-        return genres_set
+            genres.add("TV Series")
+        return genres
 
     def get_writers_and_directors(self):
         credit_divs = self.page_soup.findAll("div", {"class": "ipc-metadata-list-item__content-container"})
         for index, div in enumerate(credit_divs[:2]):
             credit_div_a = div.findAll("a")
-            temporary_set: set = {name.text for name in credit_div_a}
             if index == 0:
-                self.directors = self.set_to_string(temporary_set)
+                self.directors = self.set_to_string({name.text for name in credit_div_a})
             else:
-                self.writers = self.set_to_string(temporary_set)
+                self.writers = self.set_to_string({name.text for name in credit_div_a})
 
-    def get_cast(self) -> set:
+    def get_cast(self) -> set[str]:
         cast_name_tags = self.page_soup.findAll("a", {"class": "StyledComponents__ActorName-y9ygcu-1 eyqFnv"})
         return {actor.text for actor in cast_name_tags}
 
-    def get_related_films(self) -> set:  # Find related films
+    def get_related_films(self) -> set[str]:  # Find related films
         liked_films_all_data = self.page_soup.findAll("span", {"data-testid": "title"})
         return {film.text for film in liked_films_all_data}
 
-    def get_related_urls(self) -> list:
+    def get_related_urls(self) -> list[str]:
         root_link: str = "https://www.imdb.com"
         related_films_div = self.page_soup.findAll("div", {"class": "ipc-poster ipc-poster--base ipc-poster--dynamic"
                                                                     "-width ipc-poster-card__poster ipc-sub-grid-item"

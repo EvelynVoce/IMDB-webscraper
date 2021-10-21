@@ -5,11 +5,11 @@ FILMS_CSV_FILE: str = "films_data.csv"
 LINKS_TO_SCRAPE_FILE: str = "films_not_completed.txt"
 
 
-def retrieve_file(file_name: str):
+def retrieve_file(file_name: str) -> set[str]:
     links_to_scrape_exists: bool = path.isfile(file_name)
     if not links_to_scrape_exists:
         initiate_files(file_name)
-    return read_file(file_name)
+    return set(read_file(file_name))
 
 
 def initiate_files(file_name):
@@ -18,7 +18,7 @@ def initiate_files(file_name):
         text_file.write(endgame_link) if file_name == LINKS_TO_SCRAPE_FILE else text_file.write("")
 
 
-def read_file(file_name):
+def read_file(file_name) -> list[str]:
     with open(file_name, "r") as text_file:
         return text_file.read().splitlines()
 
