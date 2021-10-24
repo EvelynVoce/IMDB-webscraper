@@ -3,10 +3,11 @@ from os import path
 
 FILMS_CSV_FILE: str = "films_data.csv"
 LINKS_TO_SCRAPE_FILE: str = "films_not_completed.txt"
+path_to_files: str = path.join(path.split(path.dirname(__file__))[0], 'files')
 
 
 def retrieve_file(file_name: str) -> set[str]:
-    links_to_scrape_exists: bool = path.isfile(file_name)
+    links_to_scrape_exists: bool = path.isfile(path.join(path_to_files, file_name))
     if not links_to_scrape_exists:
         initiate_files(file_name)
     return set(read_file(file_name))
@@ -14,20 +15,20 @@ def retrieve_file(file_name: str) -> set[str]:
 
 def initiate_files(file_name):
     endgame_link: str = "https://www.imdb.com/title/tt4154796/"
-    with open(file_name, "w") as text_file:
+    with open(path.join(path_to_files, file_name), "w") as text_file:
         text_file.write(endgame_link) if file_name == LINKS_TO_SCRAPE_FILE else text_file.write("")
 
 
 def read_file(file_name) -> list[str]:
-    with open(file_name, "r") as text_file:
+    with open(path.join(path_to_files, file_name), "r") as text_file:
         return text_file.read().splitlines()
 
 
 def write_film_data(list_of_film_data):
     fieldnames = ["title", "release date", "rating", "genres", "directors", "writers", "cast_names", "related films"]
-    file_exists: bool = path.isfile(FILMS_CSV_FILE)
+    file_exists: bool = path.isfile(path.join(path.split(path.dirname(__file__))[0], 'files', FILMS_CSV_FILE))
 
-    with open(FILMS_CSV_FILE, "a", newline="") as file:
+    with open(path.join(path_to_files, FILMS_CSV_FILE), "a", newline="") as file:
         writer = DictWriter(file, fieldnames=fieldnames)
         if not file_exists:
             writer.writeheader()
@@ -40,8 +41,13 @@ def write_film_data(list_of_film_data):
 
 
 def update_text_file(file_name, array_to_iterate_over, file_mode):
-    completed_films: list = read_file("films_completed.txt")
-    with open(file_name, file_mode) as text_file:
+    completed_exists: bool = path.isfile(path.join(path_to_files, file_name))
+    if not completed_exists:
+        with open(file_name, "w") as text_file:
+            text_file.write("")
+    completed_films: list = read_file(path.join(path_to_files, "films_completed.txt"))
+
+    with open(path.join(path.split(path.dirname(__file__))[0], 'files', file_name), file_mode) as text_file:
         for link in array_to_iterate_over:
             if link not in completed_films:
                 text_file.write(link + "\n")
