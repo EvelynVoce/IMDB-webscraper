@@ -40,7 +40,12 @@ def write_film_data(list_of_film_data):
 
 
 def update_text_file(file_name, array_to_iterate_over, file_mode):
+    completed_exists: bool = path.isfile(file_name)
+    if not completed_exists:
+        with open(file_name, "w") as text_file:
+            text_file.write("")
     completed_films: list = read_file("films_completed.txt")
+
     with open(file_name, file_mode) as text_file:
         for link in array_to_iterate_over:
             if link not in completed_films:
