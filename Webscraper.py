@@ -18,7 +18,7 @@ def main():
     links_to_be_completed: set[str] = file_handling.retrieve_file(file_handling.LINKS_TO_SCRAPE_FILE)
     while links_to_be_completed:
         t1: float = perf_counter()
-        with ThreadPoolExecutor(max_workers=30) as p, Session() as session:
+        with ThreadPoolExecutor(max_workers=10) as p, Session() as session:
             p.map(fetch, links_to_be_completed, [session] * len(links_to_be_completed))
         print("Iteration completed in:", perf_counter() - t1)
 

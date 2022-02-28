@@ -12,7 +12,7 @@ def retrieve_file(file_name: str) -> set[str]:
     return set(read_file(file_name))
 
 
-def initiate_files(file_name):
+def initiate_files(file_name: str):
     endgame_link: str = "https://www.imdb.com/title/tt4154796/"
     with open(file_name, "w") as text_file:
         text_file.write(endgame_link) if file_name == LINKS_TO_SCRAPE_FILE else text_file.write("")

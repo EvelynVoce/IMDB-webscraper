@@ -49,7 +49,7 @@ def test_rating(expected_answer, answer):
                    ({'Horror', 'Mystery', 'Thriller'}, parsed_slender_man_film)])
 def test_genre(expected_answer, object_passed):
     actual_answer = object_passed.get_genre()
-    assert expected_answer == actual_answer
+    assert actual_answer == expected_answer
 
 
 @mark.parametrize("expected_answer, object_passed",
@@ -67,20 +67,7 @@ def test_cast(expected_answer, object_passed):
     assert expected_answer == actual_answer
 
 
-@mark.parametrize("expected_answer, object_passed",
-                  [({'The Dark Knight', 'Avengers Assemble', 'Black Panther', 'Avengers: Age of Ultron',
-                     'Thor: Ragnarok', 'Iron Man', 'Avengers: Infinity War',
-                     'Captain America: The Winter Soldier', 'Guardians of the Galaxy', 'Joker',
-                     'Captain America: Civil War', 'Doctor Strange'}, parsed_endgame),
-                   ({'Annabelle Comes Home', 'The Possession of Hannah Grace', 'Slender Man: Origins',
-                     'Pet Sematary', 'The Bye Bye Man', 'The Curse of La Llorona', 'Annabelle',
-                     'Insidious: The Last Key', 'Slender', 'Ouija',
-                     'The Nun', 'Truth or Dare'}, parsed_slender_man_film)])
-def test_related_films(expected_answer, object_passed):
-    actual_answer = object_passed.get_related_films()
-    assert expected_answer == actual_answer
-
-
+# This test worked at the time it was created, it suffers from the fact that IMDBs related films can change
 @mark.parametrize("expected_answer, object_passed",
                   [({'https://www.imdb.com/title/tt4154756/', 'https://www.imdb.com/title/tt0848228/',
                      'https://www.imdb.com/title/tt2395427/', 'https://www.imdb.com/title/tt3501632/',
