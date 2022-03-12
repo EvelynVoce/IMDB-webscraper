@@ -13,6 +13,9 @@ parsed_slender_man_film = HtmlParsing(slender_man_link, session)
 russian_link: str = "https://www.imdb.com/title/tt0386134/"
 parsed_russian_film = HtmlParsing(russian_link, session)
 
+doctor_who_link: str = "https://www.imdb.com/title/tt0436992/"
+parsed_dr_who_show = HtmlParsing(doctor_who_link, session)
+
 
 @mark.parametrize("expected_answer, answer",
                   [("", parsed_endgame.set_to_string({})),
@@ -34,7 +37,8 @@ def test_title(expected_answer, answer):
     assert expected_answer == answer
 
 
-@mark.parametrize("expected_answer, answer", [("2019", parsed_endgame.date), ("2018", parsed_slender_man_film.date)])
+@mark.parametrize("expected_answer, answer", [(parsed_endgame.date, "2019"), (parsed_slender_man_film.date, "2018"),
+                                              (parsed_dr_who_show.date, "2005")])
 def test_date(expected_answer, answer):
     assert expected_answer == answer
 
