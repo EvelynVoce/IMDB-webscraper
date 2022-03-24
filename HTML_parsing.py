@@ -39,19 +39,18 @@ class HtmlParsing:
         return amount_of_user_reviews > minimum_amount_user_reviews
 
     def set_title(self) -> str:
-        title_div_tag = self.page_soup.find("div", {"class": "TitleBlock__TitleContainer-sc-1nlhx7j-1 jxsVNt"})
-        return title_div_tag.find("h1").text.strip()
+        return self.page_soup.find("h1", {"class": "sc-b73cd867-0 eKrKux"}).text.strip()
 
     def set_date(self) -> str:
-        date_div = self.page_soup.find("div", {"class": "TitleBlock__TitleMetaDataContainer-sc-1nlhx7j-2 hWHMKr"})
+        date_div = self.page_soup.find("div", {"class": "sc-94726ce4-3 eSKKHi"})
         found_date: str = date_div.find("a").text.strip()
         return found_date.split("–")[0]
 
     def get_rating(self) -> str:
-        return self.page_soup.find("span", {"class": "AggregateRatingButton__RatingScore-sc-1ll29m0-1 iTLWoV"}).text
+        return self.page_soup.find("span", {"class": "sc-7ab21ed2-1 jGRxWM"}).text
 
     def get_genre(self) -> set[str]:
-        genres_a_tags = self.page_soup.findAll("a", {"class": "GenresAndPlot__GenreChip-sc-cum89p-3 LKJMs ipc-chip ipc-chip--on-baseAlt"})
+        genres_a_tags = self.page_soup.findAll("a", {"class": "sc-14389611-3 jyOyvn ipc-chip ipc-chip--on-baseAlt"})
         genres: set[str] = {genre.text for genre in genres_a_tags}
 
         tv_tag = self.page_soup.find("li", text="TV Series")
@@ -70,8 +69,12 @@ class HtmlParsing:
                 self.writers = self.set_to_string({name.text for name in credit_div_a})
 
     def get_cast(self) -> set[str]:
-        cast_name_tags = self.page_soup.findAll("a", {"class": "StyledComponents__ActorName-sc-y9ygcu-1 ezTgkS"})
-        return {actor.text for actor in cast_name_tags}
+        cast_divs = self.page_soup.findAll("div", {"class": "ipc-avatar ipc-avatar--base ipc-avatar--dynamic-width"})
+        list_of_actors = []
+        for div in cast_divs:
+            actor = div.find("a", {"class": "ipc-lockup-overlay ipc-focusable"})
+            list_of_actors.append(actor['aria-label'])
+        return set(list_of_actors)
 
     def get_related_films(self) -> set[str]:  # Find related films
         liked_films_all_data = self.page_soup.findAll("span", {"data-testid": "title"})
