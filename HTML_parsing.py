@@ -35,7 +35,7 @@ class HtmlParsing:
         else:
             amount_of_user_reviews: int = int(amount_of_user_reviews_span)
 
-        minimum_amount_user_reviews: int = 125
+        minimum_amount_user_reviews: int = 20
         return amount_of_user_reviews > minimum_amount_user_reviews
 
     def set_title(self) -> str:
@@ -50,7 +50,7 @@ class HtmlParsing:
         return self.page_soup.find("span", {"class": "sc-7ab21ed2-1 jGRxWM"}).text
 
     def get_genre(self) -> set[str]:
-        genres_a_tags = self.page_soup.findAll("a", {"class": "sc-14389611-3 jyOyvn ipc-chip ipc-chip--on-baseAlt"})
+        genres_a_tags = self.page_soup.findAll("a", {"class": "sc-16ede01-3 bYNgQ ipc-chip ipc-chip--on-baseAlt"})
         genres: set[str] = {genre.text for genre in genres_a_tags}
 
         tv_tag = self.page_soup.find("li", text="TV Series")
