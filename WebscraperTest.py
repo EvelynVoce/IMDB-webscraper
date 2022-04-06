@@ -57,6 +57,24 @@ def test_genre(expected_answer, object_passed):
 
 
 @mark.parametrize("expected_answer, object_passed",
+                  [({'Stan Lee', 'Christopher Markus', 'Stephen McFeely'}, parsed_endgame),
+                   ({'David Birke', 'Victor Surge'}, parsed_slender_man_film)])
+def test_writers(expected_answer, object_passed):
+    expected_result_list = object_passed.writers.split(';')
+    set_results = {x.strip() for x in expected_result_list}
+    assert set_results == expected_answer
+
+
+@mark.parametrize("expected_answer, object_passed",
+                  [({'Anthony Russo', 'Joe Russo'}, parsed_endgame),
+                   ({'Sylvain White'}, parsed_slender_man_film)])
+def test_directors(expected_answer, object_passed):
+    expected_result_list = object_passed.directors.split(';')
+    set_results = {x.strip() for x in expected_result_list}
+    assert set_results == expected_answer
+
+
+@mark.parametrize("expected_answer, object_passed",
                   [({'Jeremy Renner', 'Karen Gillan', 'Don Cheadle', 'Tessa Thompson', 'Scarlett Johansson',
                      'Evangeline Lilly', 'Zoe Saldana', 'Chris Evans', 'Brie Larson', 'Mark Ruffalo',
                      'Paul Rudd', 'Chadwick Boseman', 'Robert Downey Jr.', 'Tom Holland', 'Benedict Cumberbatch',

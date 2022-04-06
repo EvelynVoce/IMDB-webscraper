@@ -31,7 +31,7 @@ class HtmlParsing:
     def has_met_requirements(self) -> bool:
         amount_of_user_reviews_span: str = self.page_soup.find("span", {"class": "score"}).text
         if amount_of_user_reviews_span[-1] == "K":
-            amount_of_user_reviews: float = float(amount_of_user_reviews_span[:-1]) * 1000
+            amount_of_user_reviews: int = int(float(amount_of_user_reviews_span[:-1]) * 1000)
         else:
             amount_of_user_reviews: int = int(amount_of_user_reviews_span)
 
