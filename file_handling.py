@@ -5,10 +5,10 @@ FILMS_CSV_FILE: str = "films_data.csv"
 LINKS_TO_SCRAPE_FILE: str = "films_not_completed.txt"
 
 
-def performance_test():
+def get_number_of_items() -> int:
     with open(FILMS_CSV_FILE) as file:
         data = reader(file)
-        length = len(list(data))
+        length: int = len(list(data))
     return length - 1
 
 

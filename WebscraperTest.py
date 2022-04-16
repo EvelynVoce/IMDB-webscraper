@@ -61,8 +61,8 @@ def test_genre(expected_answer, object_passed):
                    ({'David Birke', 'Victor Surge'}, parsed_slender_man_film)])
 def test_writers(expected_answer, object_passed):
     expected_result_list = object_passed.writers.split(';')
-    set_results = {x.strip() for x in expected_result_list}
-    assert set_results == expected_answer
+    actual_answer: set[str] = {x.strip() for x in expected_result_list}
+    assert actual_answer == expected_answer
 
 
 @mark.parametrize("expected_answer, object_passed",
